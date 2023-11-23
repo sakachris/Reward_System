@@ -15,15 +15,29 @@
 <h1>Welcome to Teacher's Dashboard</h1>
 <a href="{% url 'award-point' %}">Award Point</a>
 <h2>Awarded Points</h2>
+<form method="get" action="{% url 'teacher' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
 <div>
     <div>
         {% for point in points %}
             <div>
                 <h3>
                     {{point.id}} - {{point.student}} - {{point.category}} - {{point.category.point}} - {{point.description}} -
-                    <a href="{% url 'update-point' point.id %}">Edit Point</a>            
+                    <a href="{% url 'update-point' point.id %}">Edit</a> - 
+                    <a href="{% url 'delete-point' point.id %}">Delete</a>            
                 </h3>
             </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<h2>Total Points</h2>
+<div>
+    <div>
+        {% for name in names %}
+            <li>{{ name.student }}</li>
         {% endfor %}
     </div>
 </div>
