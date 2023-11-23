@@ -1,0 +1,30 @@
+<!-- templates/registration/signup.html -->
+{% extends "base.html" %}
+
+{% block title %}Awarded Point{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Log Out</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a> |
+  <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+<h1>Welcome to Teacher's Dashboard</h1>
+<a href="{% url 'award-point' %}">Award Point</a>
+<h2>Awarded Points</h2>
+<div>
+    <div>
+        {% for point in points %}
+            <div>
+                <h3>
+                    {{point.id}} - {{point.student}} - {{point.category}} - {{point.category.point}} - {{point.description}} -
+                    <a href="{% url 'update-point' point.id %}">Edit Point</a>            
+                </h3>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -32,5 +32,8 @@ class PointTransaction(models.Model):
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-date', '-category']
+
     def __str__(self):
         return f"{self.student} - {self.category}"
