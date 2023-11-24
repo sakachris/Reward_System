@@ -1,4 +1,3 @@
-<!-- templates/registration/signup.html -->
 {% extends "base.html" %}
 
 {% block title %}Awarded Point{% endblock %}
@@ -19,29 +18,56 @@
     <input type="text" name="q" placeholder="Search ..." />
     <button onclick="">Clear</button>
 </form>
-<div>
-    <div>
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Points</th>
+            <th>Action</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
         {% for point in points %}
-            <div>
-                <h3>
-                    {{point.id}} - {{point.student}} - {{point.category}} - {{point.category.point}} - {{point.description}} -
-                    <a href="{% url 'update-point' point.id %}">Edit</a> - 
-                    <a href="{% url 'delete-point' point.id %}">Delete</a>            
-                </h3>
-            </div>
+            <tr>
+                <td>{{ point.id }}</td>
+                <td>{{ point.student }}</td>
+                <td>{{ point.category }}</td>
+                <td>{{ point.description }}</td>
+                <td>{{ point.category.point }}</td>
+                <td>
+                    <a href="{% url 'update-point' point.id %}">Edit</a>
+                    <a href="{% url 'delete-point' point.id %}">Delete</a>
+                </td>
+                <!-- Add more fields as needed -->
+            </tr>
         {% endfor %}
-    </div>
-</div>
+    </tbody>
+</table>
+
 <br>
 <h2>Total Points</h2>
-<div>
-    <div>
-        {{ ptss|pprint }}
-        <ul>
-            {% for key, value in ptss %}
-                <li><h3>{{ key }}: {{ value }}</h3></li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Total Points</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in ptss %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+                <!-- Add more fields as needed -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

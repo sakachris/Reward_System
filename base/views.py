@@ -54,7 +54,8 @@ def awarded(request):
     points = PointTransaction.objects.filter(
         Q(description__icontains=q) |
         Q(date__icontains=q) |
-        Q(student__username__icontains=q)
+        Q(student__username__icontains=q) |
+        Q(category__name__icontains=q)
     )
     # points = PointTransaction.objects.all()
     awards = PointTransaction.objects.all()
