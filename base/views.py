@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AwardForm
-from .models import PointTransaction
+from .models import PointTransaction, CustomUser
 
 
 class SignUpView(CreateView):
@@ -60,13 +60,21 @@ def awarded(request):
     awards = PointTransaction.objects.all()
     unique_student_names = set()
     unique_students = []
-    # awarded_points = {}
 
     for award in awards:
-        # awarded_points[award.student] = award.category.point
         if award.student not in unique_student_names:
             unique_students.append(award)
             unique_student_names.add(award.student)
-    # print(awarded_points)
-    context = {'points': points, 'names': unique_students}
+
+    pts = {}
+    for i in unique_students:
+        stud = i.student
+        # Get the total points for the student
+        total_points = PointTransaction.objects.filter(student=stud).aggregate(Sum('category__point'))['category__point__sum']
+        pts[i.student.username] = total_points
+    
+    # print(pts)
+    # print(pts['student1'])
+    ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
+    context = {'points': points, 'names': unique_students, 'ptss': ptss}
     return render(request, "base/teacher_dashboard.html", context)

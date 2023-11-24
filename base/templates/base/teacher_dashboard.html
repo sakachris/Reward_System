@@ -36,9 +36,12 @@
 <h2>Total Points</h2>
 <div>
     <div>
-        {% for name in names %}
-            <li>{{ name.student }}</li>
-        {% endfor %}
+        {{ ptss|pprint }}
+        <ul>
+            {% for key, value in ptss %}
+                <li><h3>{{ key }}: {{ value }}</h3></li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 {% endblock %}
