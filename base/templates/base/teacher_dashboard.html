@@ -1,0 +1,47 @@
+<!-- templates/registration/signup.html -->
+{% extends "base.html" %}
+
+{% block title %}Awarded Point{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Log Out</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a> |
+  <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+<h1>Welcome to Teacher's Dashboard</h1>
+<a href="{% url 'award-point' %}">Award Point</a>
+<h2>Awarded Points</h2>
+<form method="get" action="{% url 'teacher' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
+<div>
+    <div>
+        {% for point in points %}
+            <div>
+                <h3>
+                    {{point.id}} - {{point.student}} - {{point.category}} - {{point.category.point}} - {{point.description}} -
+                    <a href="{% url 'update-point' point.id %}">Edit</a> - 
+                    <a href="{% url 'delete-point' point.id %}">Delete</a>            
+                </h3>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<h2>Total Points</h2>
+<div>
+    <div>
+        {{ ptss|pprint }}
+        <ul>
+            {% for key, value in ptss %}
+                <li><h3>{{ key }}: {{ value }}</h3></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
