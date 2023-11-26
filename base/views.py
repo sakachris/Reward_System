@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
@@ -127,3 +127,34 @@ class CustomLoginView(LoginView):
             return reverse_lazy('students_dashboard')
         else:
             return reverse_lazy('admin:index')
+
+def redeempoints(request, pk):
+    """select an award you have enough points for"""
+    form = AwardForm()
+
+    if request.method == 'POST':
+        form = AwardForm(request.POST)
+        if form.is_valid():
+            current_user = request.user
+
+    
+    award = get_object_or_404(AwardItem, id=pk)
+    student = get_object_or_404(CustomUser, is_student=True, id=request.user.id)
+
+    total_points = (
+            PointTransaction.objects.filter(student=request.user)
+            .aggregate(Sum('category__point'))['category__point__sum']
+    )
+
+    if total_points >= award.points:
+        redeemed = RedeemAward.objects.create(
+            select_award = award,
+            #student = student,
+            date_redeemed = timezone.now())
+    total_points -= award.points
+    redeemed.save()
+
+
+    context = { "points": total_points }
+    return render(request, "base/students_dashboard.html", context)
+#   return JsonResponse({"message": "Redeeming Succesful"})

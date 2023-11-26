@@ -103,3 +103,24 @@ def set_teacher(sender, instance, **kwargs):
                 current_user.is_authenticated and
                 current_user.is_teacher):
             instance.teacher = current_user
+
+class AwardItem(models.Model):
+    #gifts, textbooks, trips, etc
+    name = models.CharField(max_length=100)
+    points = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-updated_at', '-created_at')
+
+    def __str__(self):
+        return self.name
+
+class RedeemAward(models.Model):
+    select_award = models.ForeignKey(AwardItem, on_delete=models.CASCADE, null=True)
+    date_redeemed = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.select_award.name

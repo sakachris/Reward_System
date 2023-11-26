@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import PointCategory, PointTransaction
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, StudentProfile, TeacherProfile
+from .models import CustomUser, StudentProfile, TeacherProfile, RedeemAward, AwardItem
 
 
 class CustomUserAdmin(UserAdmin):
@@ -25,6 +25,8 @@ class PointCategoryAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(PointCategory, PointCategoryAdmin)
 admin.site.register(PointTransaction)
+admin.site.register(AwardItem)
+admin.site.register(RedeemAward)
 
 
 @admin.register(StudentProfile)
