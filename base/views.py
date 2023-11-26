@@ -12,11 +12,23 @@ from django.http import HttpResponse
 def AwardPoint(request):
     """ view for awarding points to students """
     form = AwardForm()
+
     if request.method == 'POST':
         form = AwardForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('teacher')
+            current_user = request.user
+
+            # Check if the user is a teacher
+            if current_user.is_authenticated and current_user.is_teacher:
+                # Set the teacher ID before saving the form
+                form.instance.teacher_id = current_user.id
+                form.save()
+                return redirect('teachers_dashboard')
+            else:
+                # Handle the case where the user is not a teacher
+                pass
+                # msg = {'error_msg': 'not authorized to perform this action'}
+                # return render(request, 'error_page.html', msg)
 
     context = {'form': form}
     return render(request, "base/award_point.html", context)
@@ -30,7 +42,7 @@ def UpdatePoint(request, pk):
         form = AwardForm(request.POST, instance=point)
         if form.is_valid():
             form.save()
-            return redirect('teacher')
+            return redirect('teachers_dashboard')
 
     context = {'form': form}
     return render(request, "base/award_point.html", context)
@@ -41,7 +53,7 @@ def deletePoint(request, pk):
     point = PointTransaction.objects.get(id=pk)
     if request.method == 'POST':
         point.delete()
-        return redirect('teacher')
+        return redirect('teachers_dashboard')
 
     return render(request, "base/delete.html", {'obj': point})
 

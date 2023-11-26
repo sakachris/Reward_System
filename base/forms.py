@@ -28,7 +28,7 @@ class AwardForm(ModelForm):
 
     class Meta:
         model = PointTransaction
-        fields = '__all__'
+        fields = ['student', 'category', 'description']
 
 
 class CustomAuthenticationForm(AuthenticationForm):
