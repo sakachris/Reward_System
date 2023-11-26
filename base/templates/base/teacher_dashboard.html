@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Awarded Point{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Log Out</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a> |
+  <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+<h1>Welcome to Teacher's Dashboard</h1>
+<a href="{% url 'award-point' %}">Award Point</a>
+<h2>Awarded Points</h2>
+<form method="get" action="{% url 'teacher' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
+<br>
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Points</th>
+            <th>Action</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for point in points %}
+            <tr>
+                <td>{{ point.id }}</td>
+                <td>{{ point.student }}</td>
+                <td>{{ point.category }}</td>
+                <td>{{ point.description }}</td>
+                <td>{{ point.category.point }}</td>
+                <td>
+                    <a href="{% url 'update-point' point.id %}">Edit</a>
+                    <a href="{% url 'delete-point' point.id %}">Delete</a>
+                </td>
+                <!-- Add more fields as needed -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<br>
+<h2>Total Points</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Total Points</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in ptss %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+                <!-- Add more fields as needed -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
