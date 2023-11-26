@@ -16,6 +16,7 @@
     <thead>
         <tr>
             <th>Id</th>
+            <th>Date</th>
             <th>Name</th>
             <th>Category</th>
             <th>Description</th>
@@ -27,6 +28,7 @@
         {% for point in points %}
             <tr>
                 <td>{{ point.id }}</td>
+                <td>{{ point.created_at }}</td>
                 <td>{{ point.student }}</td>
                 <td>{{ point.category }}</td>
                 <td>{{ point.description }}</td>

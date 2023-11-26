@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import PointCategory, PointTransaction
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser
+from .models import CustomUser, StudentProfile, TeacherProfile
 
 
 class CustomUserAdmin(UserAdmin):
@@ -11,17 +11,35 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = CustomUser
     fieldsets = (
-        ('User Details', {'fields': ('username', 'email')}),
+        ('User Details', {'fields': ('username', 'email', 'first_name', 'last_name')}),
         ('User Type', {'fields': ('is_student', 'is_teacher')}),
     )
-    list_display = ["username", "email", "is_student", "is_teacher"]
+    list_display = ["username", "first_name", "last_name", "is_student", "is_teacher"]
 
 
 class PointCategoryAdmin(admin.ModelAdmin):
     """ customizing point category fields """
-    list_display = ["name", "date", "point", "description"]
+    list_display = ["name", "created_at", "updated_at", "point", "description"]
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(PointCategory, PointCategoryAdmin)
 admin.site.register(PointTransaction)
+
+
+@admin.register(StudentProfile)
+class StudentProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'grade', 'adm_no', 'parent_contact')
+
+    # Customize the display of the user field
+    def user(self, obj):
+        return obj.user.username
+
+
+@admin.register(TeacherProfile)
+class TeacherProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'designation', 'reg_no', 'contact')
+
+    # Customize the display of the user field
+    def user(self, obj):
+        return obj.user.username

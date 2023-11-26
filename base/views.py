@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AwardForm, CustomAuthenticationForm
-from .models import PointTransaction, CustomUser
+from .models import PointTransaction, CustomUser, StudentProfile
 from django.http import HttpResponse
 
 
@@ -65,7 +65,7 @@ def teachers_dashboard(request):
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
         Q(description__icontains=q) |
-        Q(date__icontains=q) |
+        Q(created_at__icontains=q) |
         Q(student__username__icontains=q) |
         Q(category__name__icontains=q)
     )
@@ -100,7 +100,7 @@ def students_dashboard(request):
         Q(student=request.user) &
         (
             Q(description__icontains=q) |
-            Q(date__icontains=q) |
+            Q(created_at__icontains=q) |
             Q(student__username__icontains=q) |
             Q(category__name__icontains=q)
         )
@@ -110,7 +110,9 @@ def students_dashboard(request):
             PointTransaction.objects.filter(student=request.user)
             .aggregate(Sum('category__point'))['category__point__sum']
     )
-    context = {'points': points, 'total': total_points}
+    #bios = {bio.user_id: bio for bio in StudentProfile.objects.all()}
+    bios = StudentProfile.objects.get(user=request.user)
+    context = {'points': points, 'total': total_points, 'bios': bios}
     return render(request, "base/students_dashboard.html", context)
 
 
