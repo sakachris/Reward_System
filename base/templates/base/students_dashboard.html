@@ -5,6 +5,7 @@
 {% block content %}
 <h1>Welcome to Student's Dashboard</h1>
 <h2>Awarded Points</h2>
+{% if total is not None %}
 <form method="get" action="{% url 'students_dashboard' %}">
     <input type="text" name="q" placeholder="Search ..." />
     <button onclick="">Clear</button>
@@ -37,5 +38,7 @@
 
 <br>
 <h2>Total Points: {{ total }}</h2>
-
+{% else %}
+<h1>No Points awarded yet</h1>
+{% endif %}
 {% endblock %}

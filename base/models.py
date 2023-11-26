@@ -29,6 +29,12 @@ class PointTransaction(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to={'is_student': True}
     )
+    '''teacher = models.ForeignKey(
+        CustomUser,
+        related_name='giving_point',
+        on_delete=models.CASCADE,
+        limit_choices_to={'is_teacher': True}
+    )'''
     category = models.ForeignKey(PointCategory, on_delete=models.CASCADE)
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
