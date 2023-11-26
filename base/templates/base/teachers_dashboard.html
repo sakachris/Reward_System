@@ -21,7 +21,6 @@
             <th>Description</th>
             <th>Points</th>
             <th>Action</th>
-            <!-- Add more columns as needed -->
         </tr>
     </thead>
     <tbody>
@@ -36,7 +35,6 @@
                     <a href="{% url 'update-point' point.id %}">Edit</a>
                     <a href="{% url 'delete-point' point.id %}">Delete</a>
                 </td>
-                <!-- Add more fields as needed -->
             </tr>
         {% endfor %}
     </tbody>
@@ -50,7 +48,6 @@
         <tr>
             <th>Student Name</th>
             <th>Total Points</th>
-            <!-- Add more columns as needed -->
         </tr>
     </thead>
     <tbody>
@@ -58,7 +55,6 @@
             <tr>
                 <td>{{ key }}</td>
                 <td>{{ value }}</td>
-                <!-- Add more fields as needed -->
             </tr>
         {% endfor %}
     </tbody>

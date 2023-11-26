@@ -6,6 +6,7 @@ from .models import CustomUser
 
 
 class CustomUserAdmin(UserAdmin):
+    """ customizing admin field """
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
@@ -17,7 +18,7 @@ class CustomUserAdmin(UserAdmin):
 
 
 class PointCategoryAdmin(admin.ModelAdmin):
-    # ...
+    """ customizing point category fields """
     list_display = ["name", "date", "point", "description"]
 
 

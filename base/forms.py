@@ -1,9 +1,14 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import (
+        UserCreationForm,
+        UserChangeForm,
+        AuthenticationForm
+)
 from .models import CustomUser, PointTransaction
 from django.forms import ModelForm
 
 
 class CustomUserCreationForm(UserCreationForm):
+    """ customizing user creation form """
 
     class Meta:
         model = CustomUser
@@ -11,6 +16,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
+    """ customizing user update form """
 
     class Meta:
         model = CustomUser
@@ -18,6 +24,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class AwardForm(ModelForm):
+    """ point award form """
 
     class Meta:
         model = PointTransaction
@@ -25,5 +32,5 @@ class AwardForm(ModelForm):
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    # Add any additional fields or customization you need
+    """ authentication form """
     pass
