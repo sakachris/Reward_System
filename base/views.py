@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
@@ -11,6 +13,19 @@ class SignUpView(CreateView):
     success_url = reverse_lazy("login")
     template_name = "base/signup.html"
 
+'''class CustomLoginView(LoginView):
+    def get_success_url(self):
+        # Redirect based on user role
+        if self.request.user.is_student:
+            return '/student/'  # Update with your actual URL
+        elif self.request.user.is_teacher:
+            return '/teacher/'  # Update with your actual URL
+        else:
+            # Redirect to a default page if neither is_student nor is_teacher is True
+            return ''  # Update with your actual URL'''
+
+def student_home(request):
+    return render(request, 'student_home.html')
 
 def AwardPoint(request):
     form = AwardForm()
@@ -47,7 +62,7 @@ def deletePoint(request, pk):
 
     return render(request, "base/delete.html", {'obj': point})
 
-
+@login_required(login_url='login')
 def awarded(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') != None else ''
