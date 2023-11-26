@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AwardForm
 from .models import PointTransaction, CustomUser
+from django.shortcuts import get_object_or_404
 
 
 class SignUpView(CreateView):
@@ -13,19 +12,6 @@ class SignUpView(CreateView):
     success_url = reverse_lazy("login")
     template_name = "base/signup.html"
 
-'''class CustomLoginView(LoginView):
-    def get_success_url(self):
-        # Redirect based on user role
-        if self.request.user.is_student:
-            return '/student/'  # Update with your actual URL
-        elif self.request.user.is_teacher:
-            return '/teacher/'  # Update with your actual URL
-        else:
-            # Redirect to a default page if neither is_student nor is_teacher is True
-            return ''  # Update with your actual URL'''
-
-def student_home(request):
-    return render(request, 'student_home.html')
 
 def AwardPoint(request):
     form = AwardForm()
@@ -62,15 +48,29 @@ def deletePoint(request, pk):
 
     return render(request, "base/delete.html", {'obj': point})
 
-@login_required(login_url='login')
+def redeempoints(request, pk):
+    """select an award you have enough points for"""
+    award = get_object_or_404(AwardItems, id=pk)
+    student = get_object_or_404(CustomUser, is_student=True, id=request.user.id)
+
+    if student.points >= award.points:
+        redeemed = RedeemAward.objects.create(
+            select_award = award,
+            student = student,
+            date_redeemed = timezone.now())
+    student.points -= award.points
+    student.save()
+
+    return JsonResponse({"message": "Redeeming Succesful"})
+
+
 def awarded(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     points = PointTransaction.objects.filter(
         Q(description__icontains=q) |
         Q(date__icontains=q) |
-        Q(student__username__icontains=q) |
-        Q(category__name__icontains=q)
+        Q(student__username__icontains=q)
     )
     # points = PointTransaction.objects.all()
     awards = PointTransaction.objects.all()

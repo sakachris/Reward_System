@@ -37,3 +37,21 @@ class PointTransaction(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.category}"
+
+class AwardItems(models.Model):
+    #gifts, textbooks, trips, etc
+    name = model.CharField(max_length=100)
+    points = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-updated', '-created')
+
+    def __str__(self):
+        return self.username
+
+class RedeemAward(models.Award):
+    select_award = models.ForeignKey(AwardItems, on_delete=models.CASCADE, null=True)
+    date_redeemed = models.DateTimeField(auto_now=True)
