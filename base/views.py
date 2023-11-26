@@ -16,7 +16,7 @@ def AwardPoint(request):
         form = AwardForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('teacher')
+            return redirect('teachers_dashboard')
 
     context = {'form': form}
     return render(request, "base/award_point.html", context)
@@ -30,7 +30,7 @@ def UpdatePoint(request, pk):
         form = AwardForm(request.POST, instance=point)
         if form.is_valid():
             form.save()
-            return redirect('teacher')
+            return redirect('teachers_dashboard')
 
     context = {'form': form}
     return render(request, "base/award_point.html", context)
@@ -41,7 +41,7 @@ def deletePoint(request, pk):
     point = PointTransaction.objects.get(id=pk)
     if request.method == 'POST':
         point.delete()
-        return redirect('teacher')
+        return redirect('teachers_dashboard')
 
     return render(request, "base/delete.html", {'obj': point})
 
