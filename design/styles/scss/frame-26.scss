@@ -1,0 +1,36 @@
+
+html {
+	font-size:62.5%;
+}
+* {
+	margin: 0;
+	padding: 0;
+}
+ul, li {
+	list-style: none;
+}
+input {
+	border: none;
+}
+body {
+  width: 39.4rem;
+}.frame-26-FZW {
+  width: 100%;
+  position: relative;
+  display: flex;
+  font-weight: 400;
+  line-height: 1.5;
+  background-color: #ffffff;
+  padding: 1.2rem 3.7rem 1.2rem 30rem;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+  font-family: Poppins, 'Source Sans Pro';
+  height: 4.8rem;
+  white-space: nowrap;
+  box-shadow: 0.8rem 0.8rem 4.8rem rgba(0, 0, 0, 0.0799999982);
+  border-radius: 2.4rem;
+  box-sizing: border-box;
+  font-size: 1.6rem;
+  overflow: hidden;
+}

@@ -1,0 +1,29 @@
+
+html {
+	font-size:62.5%;
+}
+* {
+	margin: 0;
+	padding: 0;
+}
+ul, li {
+	list-style: none;
+}
+input {
+	border: none;
+}
+body {
+  width: 23.5rem;
+}.recent-points-awarded-tPN {
+  font-weight: 600;
+  line-height: 1.5;
+  color: #000000;
+  width: 100%;
+  font-size: 2rem;
+  align-items: center;
+  justify-content: center;
+  font-family: Poppins, 'Source Sans Pro';
+  white-space: nowrap;
+  height: 3rem;
+  display: flex;
+}
