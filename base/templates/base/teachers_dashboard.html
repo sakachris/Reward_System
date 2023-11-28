@@ -60,6 +60,24 @@
     </tbody>
 </table>
 <br>
+<h2>Total Points Redeemed</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Total Points Redeemed</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in rdms %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
 
 <h2>Redeemed Awards</h2>
 <form method="get" action="{% url 'teachers_dashboard' %}">

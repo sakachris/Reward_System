@@ -75,10 +75,13 @@ def teachers_dashboard(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
-        Q(description__icontains=q) |
-        Q(created_at__icontains=q) |
-        Q(student__username__icontains=q) |
-        Q(category__name__icontains=q)
+        Q(teacher=request.user) &
+        (
+            Q(description__icontains=q) |
+            Q(created_at__icontains=q) |
+            Q(student__username__icontains=q) |
+            Q(category__name__icontains=q)
+        )
     )
     items = RedeemAward.objects.filter(
         Q(select_award__name__icontains=q) |
@@ -86,32 +89,33 @@ def teachers_dashboard(request):
         Q(student__username__icontains=q) |
         Q(select_award__points__icontains=q)
     )
-    awards = PointTransaction.objects.all()
-    unique_student_names = set()
-    unique_students = []
 
-    for award in awards:
-        if award.student not in unique_student_names:
-            unique_students.append(award)
-            unique_student_names.add(award.student)
-
-    pts = {}
-    profile = []
-    for i in unique_students:
-        stud = i.student
-        # Get the total points for the student
-        total_points = (
-                PointTransaction.objects.filter(student=stud)
-                .aggregate(Sum('category__point'))['category__point__sum'] or 0
+    awards = PointTransaction.objects.values('student__username').distinct()
+    pts = {
+        award['student__username']: (
+            PointTransaction.objects.filter(student__username=award['student__username'])
+            .aggregate(Sum('category__point'))['category__point__sum'] or 0
         )
-        pts[i.student.username] = total_points
+        for award in awards
+    }
 
     ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
+
+    redeems = RedeemAward.objects.values('student__username').distinct()
+    rdm = {
+        redeem['student__username']: (
+            RedeemAward.objects.filter(student__username=redeem['student__username'])
+            .aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
+        )
+        for redeem in redeems
+    }
+    rdms = sorted(rdm.items(), key=lambda x: x[1], reverse=True)
+
     context = {
             'points': points,
-            'names': unique_students,
+            'rdms': rdms,
             'ptss': ptss,
-            'profile': profile,
+            #'profile': profile,
             'items': items
     }
     return render(request, "base/teachers_dashboard.html", context)
