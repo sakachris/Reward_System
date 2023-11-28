@@ -13,7 +13,8 @@ input {
 	border: none;
 }
 body {
-  width: 144rem;
+  width: 100%;
+
 }.admin-dashboard-47n {
   box-sizing: border-box;
   padding: 2.3rem 3.2rem 7.5rem 3.2rem;
@@ -885,8 +886,7 @@ body {
   align-items: center;
   justify-content: center;
 }
-.admin-dashboard-47n .auto-group-tzte-jFA .auto-group-gjds-DdW .table-TXr .row-N9a .cell-bgY .content-YLt .content-YLt-sub-0 {
-}
+.admin-dashboard-47n .auto-group-tzte-jFA .auto-group-gjds-DdW .table-TXr .row-N9a .cell-bgY .content-YLt .content-YLt-sub-0,
 .admin-dashboard-47n .auto-group-tzte-jFA .auto-group-gjds-DdW .table-TXr .row-N9a .cell-bgY .content-YLt .content-YLt-sub-1 {
   font-size: 1.5rem;
   font-weight: 400;
