@@ -4,7 +4,12 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
 from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AwardForm, CustomAuthenticationForm, ReedemForm
+from .forms import (
+        CustomUserCreationForm,
+        AwardForm,
+        CustomAuthenticationForm,
+        ReedemForm
+)
 from .models import PointTransaction, CustomUser, StudentProfile, RedeemAward
 from django.http import HttpResponse
 
@@ -91,18 +96,18 @@ def teachers_dashboard(request):
         # Get the total points for the student
         total_points = (
                 PointTransaction.objects.filter(student=stud)
-                .aggregate(Sum('category__point'))['category__point__sum']
+                .aggregate(Sum('category__point'))['category__point__sum'] or 0
         )
         pts[i.student.username] = total_points
 
-        #prof = StudentProfile.objects.filter(user=stud)
-        #profile.append(prof[0])
-
-    #print(profile)
-    #for p in profile:
-        #print(p.grade)
     ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
-    context = {'points': points, 'names': unique_students, 'ptss': ptss, 'profile': profile, 'items': items}
+    context = {
+            'points': points,
+            'names': unique_students,
+            'ptss': ptss,
+            'profile': profile,
+            'items': items
+    }
     return render(request, "base/teachers_dashboard.html", context)
 
 
@@ -125,17 +130,25 @@ def students_dashboard(request):
     )
     total_redeemed = (
             RedeemAward.objects.filter(student=request.user)
-            .aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
-        )
+            .aggregate(Sum('select_award__points'))
+            .get('select_award__points__sum', 0) or 0
+    )
     points_balance = total_points - total_redeemed
-    #bios = {bio.user_id: bio for bio in StudentProfile.objects.all()}
-    #bios = StudentProfile.objects.get(user=request.user)
-    #bios = StudentProfile.objects.filter(user=request.user)[0]
+    # bios = {bio.user_id: bio for bio in StudentProfile.objects.all()}
+    # bios = StudentProfile.objects.get(user=request.user)
+    # bios = StudentProfile.objects.filter(user=request.user)[0]
     bios = {}
-    #print(bios[0].grade)
-    #print(bios.adm_no)
+    # print(bios[0].grade)
+    # print(bios.adm_no)
     redeemed_items = RedeemAward.objects.filter(student=request.user)
-    context = {'points': points, 'total': total_points, 'bios': bios, 'items': redeemed_items, 'redeemed': total_redeemed, 'balance': points_balance}
+    context = {
+            'points': points,
+            'total': total_points,
+            'bios': bios,
+            'items': redeemed_items,
+            'redeemed': total_redeemed,
+            'balance': points_balance
+    }
     return render(request, "base/students_dashboard.html", context)
 
 
@@ -151,41 +164,11 @@ class CustomLoginView(LoginView):
         else:
             return reverse_lazy('admin:index')
 
-'''def redeempoints(request, pk):
-    """select an award you have enough points for"""
-    form = AwardForm()
-
-    if request.method == 'POST':
-        form = AwardForm(request.POST)
-        if form.is_valid():
-            current_user = request.user
-
-    
-    award = get_object_or_404(AwardItem, id=pk)
-    student = get_object_or_404(CustomUser, is_student=True, id=request.user.id)
-
-    total_points = (
-            PointTransaction.objects.filter(student=request.user)
-            .aggregate(Sum('category__point'))['category__point__sum']
-    )
-
-    if total_points >= award.points:
-        redeemed = RedeemAward.objects.create(
-            select_award = award,
-            #student = student,
-            date_redeemed = timezone.now())
-    total_points -= award.points
-    redeemed.save()
-
-
-    context = { "points": total_points }
-    return render(request, "base/students_dashboard.html", context)
-#   return JsonResponse({"message": "Redeeming Succesful"})'''
 
 @login_required
 def redeemPoint(request):
     """ view for awarding points to students """
-    #form = ReedemForm()
+    # form = ReedemForm()
 
     if request.method == 'POST':
         form = ReedemForm(request.POST, request=request)
@@ -193,7 +176,7 @@ def redeemPoint(request):
             current_user = request.user
             # Check if the user is a student
             if current_user.is_authenticated and current_user.is_student:
-                # Set the teacher ID before saving the form
+                # Set the student ID before saving the form
                 form.instance.student_id = current_user.id
             form.save()
             return redirect('students_dashboard')  # Redirect to a success page
@@ -201,6 +184,3 @@ def redeemPoint(request):
         form = ReedemForm(request=request)
 
     return render(request, 'base/redeem_point.html', {'form': form})
-            #current_user = request.user
-
-            # Check if the user is a teacher

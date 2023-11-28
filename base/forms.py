@@ -39,33 +39,6 @@ class CustomAuthenticationForm(AuthenticationForm):
     pass
 
 
-'''class ReedemForm(forms.ModelForm):
-    """ point award form """
-
-    class Meta:
-        model = RedeemAward
-        #fields = "__all__"
-        fields = ['select_award']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        student = cleaned_data.get('student')
-
-        total_points = (
-            PointTransaction.objects.filter(student=student)
-            .aggregate(Sum('category__point'))['category__point__sum'] or 0
-        )
-        total_redeemed = (
-            RedeemAward.objects.filter(student=student)
-            .aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
-        )
-        available_points = total_points - total_redeemed
-        # Assuming you have a method in your CustomUser model to calculate total points
-        if available_points < cleaned_data.get('select_award').points:
-            raise forms.ValidationError('Not enough points to redeem the award.')
-
-        return cleaned_data'''
-    
 class ReedemForm(forms.ModelForm):
     """ point award form """
 
@@ -81,19 +54,22 @@ class ReedemForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         if self.request:
-            student = self.request.user  # Assuming the user is a CustomUser instance
+            student = self.request.user
             total_points = (
                 PointTransaction.objects.filter(student=student)
                 .aggregate(Sum('category__point'))['category__point__sum'] or 0
             )
             total_redeemed = (
                 RedeemAward.objects.filter(student=student)
-                .aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
+                .aggregate(Sum('select_award__points'))
+                .get('select_award__points__sum', 0) or 0
             )
             available_points = total_points - total_redeemed
 
             if available_points < cleaned_data.get('select_award').points:
-                raise forms.ValidationError('Not enough points to redeem the award.')
+                raise forms.ValidationError(
+                        'Not enough points to redeem the award.'
+                )
 
             cleaned_data['student'] = student
 

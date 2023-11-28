@@ -1,5 +1,5 @@
-from typing import Any
-from django.db import models
+# from typing import Any
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
@@ -20,7 +20,8 @@ class CustomUser(AbstractUser):
 
 
 class StudentProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
+                                primary_key=True)
     grade = models.CharField(max_length=10, null=True, blank=True)
     adm_no = models.PositiveIntegerField(null=True, blank=True, unique=True)
     parent_contact = models.CharField(max_length=15, null=True, blank=True)
@@ -30,7 +31,8 @@ class StudentProfile(models.Model):
 
 
 class TeacherProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
+                                primary_key=True)
     designation = models.CharField(max_length=30, null=True, blank=True)
     reg_no = models.PositiveIntegerField(null=True, blank=True, unique=True)
     contact = models.CharField(max_length=15, null=True, blank=True)
@@ -41,22 +43,29 @@ def create_student_profile(sender, instance, created, **kwargs):
     if created and instance.is_student:
         StudentProfile.objects.get_or_create(user=instance)
 
+
 @receiver(post_save, sender=CustomUser)
 def save_student_profile(sender, instance, **kwargs):
     if instance.is_student:
-        student_profile, created = StudentProfile.objects.get_or_create(user=instance)
+        student_profile, created = (
+                StudentProfile.objects.get_or_create(user=instance)
+        )
         if not created:
             student_profile.save()
+
 
 @receiver(post_save, sender=CustomUser)
 def create_teacher_profile(sender, instance, created, **kwargs):
     if created and instance.is_teacher:
         TeacherProfile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=CustomUser)
 def save_teacher_profile(sender, instance, **kwargs):
     if instance.is_teacher:
-        teacher_profile, created = TeacherProfile.objects.get_or_create(user=instance)
+        teacher_profile, created = (
+                TeacherProfile.objects.get_or_create(user=instance)
+        )
         if not created:
             teacher_profile.save()
 
@@ -108,11 +117,13 @@ def set_teacher(sender, instance, **kwargs):
                 current_user.is_teacher):
             instance.teacher = current_user
 
+
 class AwardItem(models.Model):
-    #gifts, textbooks, trips, etc
+    """ gifts, textbooks, trips, etc """
     name = models.CharField(max_length=100)
     points = models.IntegerField()
     description = models.TextField(null=True, blank=True)
+    units = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -120,10 +131,16 @@ class AwardItem(models.Model):
         ordering = ('-updated_at', '-created_at')
 
     def __str__(self):
-        return f"{self.name} - {self.points} points "
+        return f"{self.name} - {self.points} points - {self.units} remaining"
+
 
 class RedeemAward(models.Model):
-    select_award = models.ForeignKey(AwardItem, on_delete=models.CASCADE, null=True)
+    select_award = models.ForeignKey(
+        AwardItem,
+        on_delete=models.CASCADE,
+        null=True,
+        limit_choices_to={'units__gt': 0}
+    )
     student = models.ForeignKey(
         CustomUser,
         related_name='redeeming_point',
@@ -137,3 +154,13 @@ class RedeemAward(models.Model):
 
     def __str__(self):
         return self.select_award.name
+
+    def save(self, *args, **kwargs):
+        # Ensure atomicity when updating both AwardItem and RedeemAward
+        with transaction.atomic():
+            # Deduct points from units when saving a new RedeemAward instance
+            if not self.pk:  # Check if the instance is being created
+                self.select_award.units -= 1
+                self.select_award.save()
+
+            super().save(*args, **kwargs)
