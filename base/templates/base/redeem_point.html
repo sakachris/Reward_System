@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Redeem Point{% endblock %}
+
+{% block content %}
+<h2>Redeem Point</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Redeem</button>
+</form>
+<a href="{% url 'students_dashboard' %}">Back</a>
+{% endblock %}
