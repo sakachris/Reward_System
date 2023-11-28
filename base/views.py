@@ -14,6 +14,8 @@ from .models import PointTransaction, CustomUser, StudentProfile, RedeemAward
 from django.http import HttpResponse
 
 
+@user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
+                  login_url='login')
 def AwardPoint(request):
     """ view for awarding points to students """
     form = AwardForm()
@@ -39,6 +41,8 @@ def AwardPoint(request):
     return render(request, "base/award_point.html", context)
 
 
+@user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
+                  login_url='login')
 def UpdatePoint(request, pk):
     """Updates awarded point"""
     point = PointTransaction.objects.get(id=pk)
@@ -53,6 +57,8 @@ def UpdatePoint(request, pk):
     return render(request, "base/award_point.html", context)
 
 
+@user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
+                  login_url='login')
 def deletePoint(request, pk):
     """deletes a point awarded"""
     point = PointTransaction.objects.get(id=pk)
@@ -111,6 +117,8 @@ def teachers_dashboard(request):
     return render(request, "base/teachers_dashboard.html", context)
 
 
+@user_passes_test(lambda u: u.is_authenticated and u.is_student,
+                  login_url='login')
 def students_dashboard(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
@@ -165,7 +173,8 @@ class CustomLoginView(LoginView):
             return reverse_lazy('admin:index')
 
 
-@login_required
+@user_passes_test(lambda u: u.is_authenticated and u.is_student,
+                  login_url='login')
 def redeemPoint(request):
     """ view for awarding points to students """
     # form = ReedemForm()
