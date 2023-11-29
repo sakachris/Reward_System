@@ -146,13 +146,11 @@ def students_dashboard(request):
             .get('select_award__points__sum', 0) or 0
     )
     points_balance = total_points - total_redeemed
-    # bios = {bio.user_id: bio for bio in StudentProfile.objects.all()}
-    # bios = StudentProfile.objects.get(user=request.user)
-    # bios = StudentProfile.objects.filter(user=request.user)[0]
-    bios = {}
-    # print(bios[0].grade)
-    # print(bios.adm_no)
+    
+    bios = StudentProfile.objects.filter(user=request.user)[0]
+
     redeemed_items = RedeemAward.objects.filter(student=request.user)
+
     context = {
             'points': points,
             'total': total_points,
@@ -161,6 +159,7 @@ def students_dashboard(request):
             'redeemed': total_redeemed,
             'balance': points_balance
     }
+
     return render(request, "base/students_dashboard.html", context)
 
 

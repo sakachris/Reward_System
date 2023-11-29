@@ -4,6 +4,7 @@
 
 {% block content %}
 <h1>Welcome to Student's Dashboard</h1>
+<h3>Adm no: {{ bios.adm_no }} , Grade: {{ bios.grade }}</h3>
 <a href="{% url 'redeem-point' %}">Redeem Points</a>
 <h2>Awarded Points</h2>
 {% if total is not None and total != 0 %}
@@ -46,8 +47,6 @@
 {% else %}
 <h1>No Points awarded yet</h1>
 {% endif %}
-
-<h1>{{ bios.adm_no }}</h1>
 
 <h2>Redeemed Items</h2>
 {% if redeemed is not None and redeemed != 0 %}
