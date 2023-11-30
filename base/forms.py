@@ -3,7 +3,7 @@ from django.contrib.auth.forms import (
         UserChangeForm,
         AuthenticationForm
 )
-from .models import CustomUser, PointTransaction
+from .models import CustomUser, PointTransaction, RedeemAward
 from django.forms import ModelForm
 
 
@@ -34,3 +34,8 @@ class AwardForm(ModelForm):
 class CustomAuthenticationForm(AuthenticationForm):
     """ authentication form """
     pass
+
+class RedeemForm(ModelForm):
+    class Meta:
+        model = RedeemAward
+        fields = ['select_award']

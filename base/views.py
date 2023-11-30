@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
 from django.db.models import Q, Sum
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AwardForm, CustomAuthenticationForm
-from .models import PointTransaction, CustomUser, StudentProfile
+from .forms import CustomUserCreationForm, AwardForm, CustomAuthenticationForm, RedeemForm
+from .models import PointTransaction, CustomUser, StudentProfile, AwardItem
 from django.http import HttpResponse
 
 
@@ -128,33 +128,29 @@ class CustomLoginView(LoginView):
         else:
             return reverse_lazy('admin:index')
 
-def redeempoints(request, pk):
+def redeempoints(request):
     """select an award you have enough points for"""
-    form = AwardForm()
+    awards = AwardItem.objects.all()
+    form = RedeemForm()
 
     if request.method == 'POST':
-        form = AwardForm(request.POST)
+        form = RedeemForm(request.POST)
         if form.is_valid():
-            current_user = request.user
+            total_points = (
+                PointTransaction.objects.filter(student=request.user)
+                .aggregate(Sum('category__point'))['category__point__sum']
+            )
 
-    
-    award = get_object_or_404(AwardItem, id=pk)
-    student = get_object_or_404(CustomUser, is_student=True, id=request.user.id)
+            if total_points >= awards.points:
+                redeemed = RedeemAward.objects.create(
+                    select_award = awards,
+                    date_redeemed = timezone.now()
+                    )
+                total_points -= awards.points
+                redeemed.save()
+    else:
+        form = RedeemForm() #incase method isn't post
 
-    total_points = (
-            PointTransaction.objects.filter(student=request.user)
-            .aggregate(Sum('category__point'))['category__point__sum']
-    )
-
-    if total_points >= award.points:
-        redeemed = RedeemAward.objects.create(
-            select_award = award,
-            #student = student,
-            date_redeemed = timezone.now())
-    total_points -= award.points
-    redeemed.save()
-
-
-    context = { "points": total_points }
-    return render(request, "base/students_dashboard.html", context)
+    context = { "award": awards }
+    return render(request, "base/redeem_point.html", context)
 #   return JsonResponse({"message": "Redeeming Succesful"})

@@ -6,7 +6,8 @@ from .views import (
         CustomLoginView,
         AwardPoint,
         UpdatePoint,
-        deletePoint
+        deletePoint,
+        redeempoints,
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path("award-point/", AwardPoint, name="award-point"),
     path("update-point/<str:pk>/", UpdatePoint, name="update-point"),
     path("delete-point/<str:pk>/", deletePoint, name="delete-point"),
+    path("redeem-points/", redeempoints, name="redeem-point"),
 ]

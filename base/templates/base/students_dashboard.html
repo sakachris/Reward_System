@@ -3,7 +3,13 @@
 {% block title %}Students Dashboard{% endblock %}
 
 {% block content %}
-<h1>Welcome to Student's Dashboard</h1>
+<h1>Welcome back, {{ request.user }}!</h1>
+<h3>Always stay updated on your points</h3>
+
+
+<a href="{% url 'redeem-point' %}">Redeem Points</a>
+
+
 <h2>Awarded Points</h2>
 {% if total is not None %}
 <form method="get" action="{% url 'students_dashboard' %}">
@@ -41,7 +47,7 @@
 </div>
 
 <br>
-<h2>Total Points: {{ total }}</h2>
+<h2>Total Points: {{ total }}</h2>>
 {% else %}
 <h1>No Points awarded yet</h1>
 {% endif %}
