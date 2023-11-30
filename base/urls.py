@@ -4,10 +4,10 @@ from .views import (
         teachers_dashboard,
         students_dashboard,
         CustomLoginView,
-        AwardPoint,
-        UpdatePoint,
-        deletePoint,
-        redeemPoint
+        award_point,
+        update_point,
+        delete_point,
+        redeem_point
 )
 
 urlpatterns = [
@@ -15,8 +15,8 @@ urlpatterns = [
     path('students/dashboard/', students_dashboard, name='students_dashboard'),
     path('', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path("award-point/", AwardPoint, name="award-point"),
-    path("redeem-point/", redeemPoint, name="redeem-point"),
-    path("update-point/<str:pk>/", UpdatePoint, name="update-point"),
-    path("delete-point/<str:pk>/", deletePoint, name="delete-point"),
+    path("award-point/", award_point, name="award-point"),
+    path("redeem-point/", redeem_point, name="redeem-point"),
+    path("update-point/<str:pk>/", update_point, name="update-point"),
+    path("delete-point/<str:pk>/", delete_point, name="delete-point"),
 ]

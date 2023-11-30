@@ -7,7 +7,6 @@ from django.contrib.auth.forms import (
 from .models import CustomUser, PointTransaction, RedeemAward
 from django.forms import ModelForm
 from django.db.models import Sum
-from django.shortcuts import render, redirect
 
 
 class CustomUserCreationForm(UserCreationForm):

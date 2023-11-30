@@ -1,4 +1,3 @@
-# from typing import Any
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import pre_save, post_save
@@ -20,6 +19,7 @@ class CustomUser(AbstractUser):
 
 
 class StudentProfile(models.Model):
+    """ model for storing student's extra data """
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
                                 primary_key=True)
     grade = models.CharField(max_length=10, null=True, blank=True)
@@ -31,6 +31,7 @@ class StudentProfile(models.Model):
 
 
 class TeacherProfile(models.Model):
+    """ model for storing teacher's extra data """
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
                                 primary_key=True)
     designation = models.CharField(max_length=30, null=True, blank=True)
@@ -135,6 +136,7 @@ class AwardItem(models.Model):
 
 
 class RedeemAward(models.Model):
+    """ model for redeeming award """
     select_award = models.ForeignKey(
         AwardItem,
         on_delete=models.CASCADE,
@@ -156,7 +158,7 @@ class RedeemAward(models.Model):
         return self.select_award.name
 
     def save(self, *args, **kwargs):
-        # Ensure atomicity when updating both AwardItem and RedeemAward
+        # Ensuring atomicity when updating both AwardItem and RedeemAward
         with transaction.atomic():
             # Deduct points from units when saving a new RedeemAward instance
             if not self.pk:  # Check if the instance is being created

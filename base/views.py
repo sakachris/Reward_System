@@ -16,7 +16,7 @@ from django.http import HttpResponse
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
                   login_url='login')
-def AwardPoint(request):
+def award_point(request):
     """ view for awarding points to students """
     form = AwardForm()
 
@@ -43,7 +43,7 @@ def AwardPoint(request):
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
                   login_url='login')
-def UpdatePoint(request, pk):
+def update_point(request, pk):
     """Updates awarded point"""
     point = PointTransaction.objects.get(id=pk)
     form = AwardForm(instance=point)
@@ -59,7 +59,7 @@ def UpdatePoint(request, pk):
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
                   login_url='login')
-def deletePoint(request, pk):
+def delete_point(request, pk):
     """deletes a point awarded"""
     point = PointTransaction.objects.get(id=pk)
     if request.method == 'POST':
@@ -93,19 +93,21 @@ def teachers_dashboard(request):
     awards = PointTransaction.objects.values('student__username').distinct()
     pts = {
         award['student__username']: (
-            PointTransaction.objects.filter(student__username=award['student__username'])
+            PointTransaction.objects
+            .filter(student__username=award['student__username'])
             .aggregate(Sum('category__point'))['category__point__sum'] or 0
         )
         for award in awards
     }
-
     ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
 
     redeems = RedeemAward.objects.values('student__username').distinct()
     rdm = {
         redeem['student__username']: (
-            RedeemAward.objects.filter(student__username=redeem['student__username'])
-            .aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
+            RedeemAward.objects
+            .filter(student__username=redeem['student__username'])
+            .aggregate(Sum('select_award__points'))
+            .get('select_award__points__sum', 0) or 0
         )
         for redeem in redeems
     }
@@ -115,7 +117,6 @@ def teachers_dashboard(request):
             'points': points,
             'rdms': rdms,
             'ptss': ptss,
-            #'profile': profile,
             'items': items
     }
     return render(request, "base/teachers_dashboard.html", context)
@@ -146,7 +147,7 @@ def students_dashboard(request):
             .get('select_award__points__sum', 0) or 0
     )
     points_balance = total_points - total_redeemed
-    
+
     bios = StudentProfile.objects.filter(user=request.user)[0]
 
     redeemed_items = RedeemAward.objects.filter(student=request.user)
@@ -178,7 +179,7 @@ class CustomLoginView(LoginView):
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_student,
                   login_url='login')
-def redeemPoint(request):
+def redeem_point(request):
     """ view for awarding points to students """
     # form = ReedemForm()
 
@@ -191,7 +192,7 @@ def redeemPoint(request):
                 # Set the student ID before saving the form
                 form.instance.student_id = current_user.id
             form.save()
-            return redirect('students_dashboard')  # Redirect to a success page
+            return redirect('students_dashboard')
     else:
         form = ReedemForm(request=request)
 

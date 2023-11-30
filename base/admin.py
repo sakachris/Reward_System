@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import PointCategory, PointTransaction
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import (
@@ -43,24 +42,22 @@ class AwardItemAdmin(admin.ModelAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(PointCategory, PointCategoryAdmin)
-# admin.site.register(PointTransaction)
 admin.site.register(AwardItem, AwardItemAdmin)
-# admin.site.register(RedeemAward)
 
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
+    """ customizing Student Profile fields view """
     list_display = ('user', 'grade', 'adm_no', 'parent_contact')
 
-    # Customize the display of the user field
     def user(self, obj):
         return obj.user.username
 
 
 @admin.register(TeacherProfile)
 class TeacherProfileAdmin(admin.ModelAdmin):
+    """ customizing Teacher Profile fields view """
     list_display = ('user', 'designation', 'reg_no', 'contact')
 
-    # Customize the display of the user field
     def user(self, obj):
         return obj.user.username
