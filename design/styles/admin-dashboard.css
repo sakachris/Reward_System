@@ -9,13 +9,18 @@ html {
 ul, li {
 	list-style: none;
 }
+a {
+  text-underline-position: none;
+  color: #ffffff;
+}
 input {
 	border: none;
 }
 body {
   width: 100%;
 
-}.admin-dashboard-47n {
+}
+.admin-dashboard-47n {
   box-sizing: border-box;
   padding: 2.3rem 3.2rem 7.5rem 3.2rem;
   width: 100%;
@@ -27,6 +32,9 @@ body {
   box-shadow: 1.2rem 1.2rem 4.8rem rgba(0, 0, 0, 0.1199999973);
   background-color: #ffffff;
   border-radius: 2.4rem;
+}
+.group-18-XmN .a {
+  color: #042474;
 }
 .admin-dashboard-47n .auto-group-uga8-Agc {
   margin: 0rem 7.3rem 3.4rem 49.8rem;
