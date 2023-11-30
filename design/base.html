@@ -13,47 +13,50 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins%3A400%2C600"/>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-light>
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-body-light">
+        <div class="justify-content-center">
             <a class="navbar-brand" href="#">
                 <h1 class="text-center">Nuru Academy</h1>
-              </a>
+            </a>
             <img src="./assets/frame-19-bg.png" alt="profile-icon" class="float-end mx-1 rounded-circle" border-color="#925fe2" position="relative" border="4px solid" width: 48px;
             height="48px" border-radius="360px">
             <h5 class="text-end">Name of Student</h5>
         </div>
     </nav>
-    <div class="school-image"><img src="./assets/redeem-points-1-1.png" width="222px" height="222px" position="fixed" top="0" left="0" object-fit="cover" alt="redeem-points"></div>
-    <div class="container p-5 my-5 bg-primary text-white" position="relative" width="1095" height="256" padding="128px 32px 640px 313px">
+    <section>
+        <div class="school-image"><img src="./assets/redeem-points-1-1.png" style="width:222px; height:222px; position:absolutes; object-fit:cover" alt="redeem-points"></div>
+        <div class="container my-5 text-white" style="background-color:hsl(248, 53%, 58%); position: relative; width:1095px; height:25px; border-radius: 24px; padding:128px 32px 640px 313px">
         <p class="text-light" style="width:222px; height:36px">November 30, 2023</p>
         <h3 class="p-2 g-col-6 mt-" style="width:396px; height:54px">Welcome back, Mr. Peter</h3>
         <p class="text-light" style="width:222px; height:36px">Always stay updated on your points</p>
         <button type="button" class="btn p-2 g-col-6 bg-light btn-lg float-center" style="width:229px; height:68px; padding:140px 320px 48px 546px">Redeem points</button>
-        <img src="./assets/redeem-points-1.png" class="float-end" style="width:218px; height:229px; top:0; left:0; object-fit:cover" alt="redeem-points">
+        <img src="./assets/redeem-points-1.png" class="float-end" style="width:218px; height:229px; object-fit: cover;" alt="redeem-points">
     </div>
-    <div class="bg-primary bg-gradient text-light" style="width:233px; height:565px" >
-        <div class="div">
+    </section>
+    
+    <div class="bg-gradient text-light" style="background-color:hsl(248, 53%, 58%); width:233px; height:565px; border-radius: 24px;" >
+        <div class="mt-5">
             <div class="div-2">
-                <img class="img" src="./assets/dashboard.png" />
+                <img class="img" src="./assets/dashboard.png" style="margin-top: 109px; margin-left: 65px; width: 24px; height: 24px"/>
                 <div class="text-wrapper">Dashboard</div>
             </div>
-            <div class="div-2">
-                <img class="img" src="./assets/cash.png" />
+            <div class="div-2 mt-5">
+                <img class="img" src="./assets/cash.png"/>
                 <div class="text-wrapper-2">Points Awarded</div>
             </div>
-            <div class="div-2">
-                <img class="img" src="./assets/notebook.png" />
+            <div class="div-2 mt-5">
+                <img class="img" src="./assets/notebook.png"/>
                 <div class="text-wrapper-2">Points Redeemed</div>
             </div>
             </div>
-            <div class="div-3">
-                <img class="img" src="./assets/logout.png" />
+            <div class="div-3 mt-5">
+                <img class="img" src="./assets/logout.png"/>
                 <div class="text-wrapper-3">Logout</div>
             </div>
         </div>
     <div class="container-lg my-5">
         <h3>Points</h3>
-        <div class="row">
+        <div class="row my-5 g-5 justify-content-around align-contents-center">
             <div class="col">
                 <div class="card p-5 bg-light text-dark">
                     <img src="./assets/frame-30-r2Y.png" class="card-img-top" alt="total-points" width="80px" height="55px">
@@ -74,7 +77,33 @@
                     <h6>7,000 Points</h6>
                     <p>Remaining</p>
                 </div>
-               
+                <h3>Recent Points Awarded</h3>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">November 9, 2023</h5>
+                        <small>50 points</small>
+                      </div>
+                      <p class="mb-1">Punctuality: For being the most punctual in the week</p>
+                      <small>By Mr. Peter</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">November 8, 2023</h5>
+                        <small class="text-body-secondary">40 points</small>
+                      </div>
+                      <p class="mb-1">Creativity: For designing the most impressive poster</p>
+                      <small class="text-body-secondary">by Mr. Chris</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">List group item heading</h5>
+                        <small class="text-body-secondary">3 days ago</small>
+                      </div>
+                      <p class="mb-1">Some placeholder content in a paragraph.</p>
+                      <small class="text-body-secondary">And some muted small print.</small>
+                    </a>
+                  </div>
             </div>
         </div>
     </div>
