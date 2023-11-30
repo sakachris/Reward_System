@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Teachers Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome to Teacher's Dashboard</h1>
+<a href="{% url 'award-point' %}">Award Point</a>
+<h2>Awarded Points</h2>
+<form method="get" action="{% url 'teachers_dashboard' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
+<br>
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Points</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for point in points %}
+            <tr>
+                <td>{{ point.id }}</td>
+                <td>{{ point.student }}</td>
+                <td>{{ point.category.name }}</td>
+                <td>{{ point.description }}</td>
+                <td>{{ point.category.point }}</td>
+                <td>
+                    <a href="{% url 'update-point' point.id %}">Edit</a>
+                    <a href="{% url 'delete-point' point.id %}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<br>
+<h2>Total Points</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Total Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in ptss %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<h2>Total Points Redeemed</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Total Points Redeemed</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in rdms %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+
+<h2>Redeemed Awards</h2>
+<form method="get" action="{% url 'teachers_dashboard' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
+<br>
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Item</th>
+            <th>Points</th>
+            <th>Date Redeemed</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.student }}</td>
+                <td>{{ item.select_award.name }}</td>
+                <td>{{ item.select_award.points }}</td>
+                <td>{{ item.date_redeemed }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

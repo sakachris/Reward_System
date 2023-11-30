@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Students Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome to Student's Dashboard</h1>
+<h3>Adm no: {{ bios.adm_no }} , Grade: {{ bios.grade }}</h3>
+<a href="{% url 'redeem-point' %}">Redeem Points</a>
+<h2>Awarded Points</h2>
+{% if total is not None and total != 0 %}
+<form method="get" action="{% url 'students_dashboard' %}">
+    <input type="text" name="q" placeholder="Search ..." />
+    <button onclick="">Clear</button>
+</form>
+<br>
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Points</th>
+            <th>AwardedBy</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for point in points %}
+            <tr>
+                <td>{{ point.id }}</td>
+                <td>{{ point.created_at }}</td>
+                <td>{{ point.student.first_name }} {{ point.student.last_name }}</td>
+                <td>{{ point.category.name }}</td>
+                <td>{{ point.description }}</td>
+                <td>{{ point.category.point }}</td>
+                <td>{{ point.teacher }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<br>
+<h2>Total Points: {{ total }}</h2>
+{% else %}
+<h1>No Points awarded yet</h1>
+{% endif %}
+
+<h2>Redeemed Items</h2>
+{% if redeemed is not None and redeemed != 0 %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Item</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.date_redeemed }}</td>
+                    <td>{{ item.student }}</td>
+                    <td>{{ item.select_award.name }}</td>
+                    <td>{{ item.select_award.points }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+<br>
+<h2>Total Redeemed: {{ redeemed }}</h2>
+<h2>Total Balance: {{ balance }}</h2>
+{% else %}
+<h1>No Awards redeemed yet</h1>
+{% endif %}
+{% endblock %}
