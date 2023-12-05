@@ -79,7 +79,7 @@ def delete_point(request, pk):
 def teachers_dashboard(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
-    points = PointTransaction.objects.filter(
+    '''points = PointTransaction.objects.filter(
         Q(teacher=request.user) &
         (
             Q(description__icontains=q) |
@@ -87,7 +87,9 @@ def teachers_dashboard(request):
             Q(student__username__icontains=q) |
             Q(category__name__icontains=q)
         )
-    )
+    )'''
+    points = PointTransaction.objects.filter(teacher=request.user).order_by('-created_at')[:5]
+
     items = RedeemAward.objects.filter(
         Q(select_award__name__icontains=q) |
         Q(date_redeemed__icontains=q) |
@@ -95,7 +97,10 @@ def teachers_dashboard(request):
         Q(select_award__points__icontains=q)
     )
 
+    total_points = PointTransaction.objects.all().aggregate(Sum('category__point'))['category__point__sum'] or 0
+    
     awards = PointTransaction.objects.values('student__username').distinct()
+    
     pts = {
         award['student__username']: (
             PointTransaction.objects
@@ -105,6 +110,8 @@ def teachers_dashboard(request):
         for award in awards
     }
     ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
+    no_of_students_awarded = len(ptss)
+    total_redeemed = RedeemAward.objects.all().aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
 
     redeems = RedeemAward.objects.values('student__username').distinct()
     rdm = {
@@ -117,12 +124,19 @@ def teachers_dashboard(request):
         for redeem in redeems
     }
     rdms = sorted(rdm.items(), key=lambda x: x[1], reverse=True)
+    no_of_students_redeemed = len(rdms)
+    total_balance = total_points - total_redeemed
 
     context = {
             'points': points,
             'rdms': rdms,
             'ptss': ptss,
-            'items': items
+            'items': items,
+            'total_points': total_points,
+            'total_redeemed': total_redeemed,
+            'total_balance': total_balance,
+            'students_awarded': no_of_students_awarded,
+            'students_redeemed': no_of_students_redeemed
     }
     return render(request, "base/teachers_dashboard.html", context)
 
