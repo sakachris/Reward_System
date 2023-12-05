@@ -8,6 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Students' Dashboard</title>
+    <style>
+        .custom-table {
+          max-height: 200px; /* Set your desired fixed height */
+          overflow-y: auto;  /* Enable vertical scroll */
+        }
+      </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter%3A400%2C600%2C700"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sriracha%3A400"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A400%2C600%2C700"/>
@@ -20,7 +26,7 @@
         </div>
         <div class="d-flex justify-content-end align-items-center">
             <div class="px-3">
-                <img src="{% static 'base/assets/user.png' %}" alt="profile-icon" class="float-end align-contents-center rounded-circle" style="position:relative; border:4px solid blueviolet; width: 48px; height: 48px;">
+                <img src="{% static 'base/assets/frame-19-bg.png' %}" alt="profile-icon" class="float-end align-contents-center rounded-circle" style="position:relative; border:4px solid blueviolet; width: 48px; height: 48px;">
             </div>
             <div class="d-flex flex-column align-items-start">
                 <h5 class="text-end font-weight-bold">{{ bios.user.first_name }} {{ bios.user.last_name }}</h5>
@@ -30,13 +36,17 @@
     </div>
     <section class="d-flex justify-content-between m-4 align-items-center">
         <div class="school-image">
+            <!--<img src="./assets/redeem-points-1-1.png" style="width:222px; height:222px; object-fit:cover"
+                alt="redeem-points">-->
             <img src="{% static 'base/assets/redeem-points-1-1.png' %}" class="img-fluid" style="width:60%; height:auto;" alt="redeem-points">
         </div>
+        <!--<div class="container-lg text-white position-relative p-3"
+            style="background-color:hsl(248, 53%, 58%); width:1095px; height:256px; border-radius: 24px;">-->
         <div class="container-lg" style="background-color:hsl(248, 53%, 58%); border-radius: 24px;">
             <div class="row g-2 justify-content-center align-items-center">
                 <div class="col-sm-6 col-lg-6 align-contents-center">
                     <div>
-                        <p class="text-light ms-3">{% now "d-m-Y H:i" %}</p>
+                        <p class="text-light ms-3">November 30, 2023</p>
                         <div class="text-light ms-3">
                             <h3 class="">Welcome back, {{ bios.user.first_name }}</h3>
                             <p class="">Always stay updated on your points</p>
@@ -44,6 +54,10 @@
                     </div>
                 </div>
                 <div class="col-sm-3 col-lg-3">
+                    <!--<button type="button" class="btn p-2 bg-light btn-lg border border-dark"
+                        style="margin: 40px auto; margin-left: 100px; width:229px; height:68px; padding:140px 320px 48px 546px; border-radius: 100px 100px 100px 100px; color: #042474; font-weight: 600; font-size: 24px;">Redeem
+                        points</button>-->
+                    <!--<button type="button" class="btn p-2 bg-light btn-lg border border-dark">Redeem points</button>-->
                     <a class="btn p-2 bg-light btn-lg border border-dark" href="{% url 'redeem-point' %}">Redeem Points</a>
                 </div>
                 
@@ -54,6 +68,7 @@
         </div>
     </section>
     <section class="d-flex justify-content-between m-3 align-items-center">
+        <!--<div class="text-light mx-4" style="background-color:hsl(248, 53%, 58%); width:233px; height:565px; border-radius: 24px;" ></div>-->
         <div class="text-light mx-4" style="background-color:hsl(248, 53%, 58%); width:15%; height:565px; border-radius: 24px;" >
             <div class="mt-0">
                 <div class="d-flex justify-content align-items-center">
@@ -80,9 +95,10 @@
         </div>
         <div class="container">  
             <div class="row justify-content-around align-contents-center">
+                <!--<h3 class="mt-0">Points</h3>-->
                 <div class="col-sm-9">
                     <div class="row d-flex">
-                        <h4 class="text-center mb-5">Points</h4>
+                        <h3 class="text-center mb-5">Points</h3>
                         <div class="col-md-4">
                             <div class="card p-5 bg-light text-dark align-items-center">
                                 <img src="{% static 'base/assets/frame-30-r2Y.png' %}" class="card-img-top img-fluid" alt="total-points" style="width:60%; height:auto;">
@@ -112,48 +128,61 @@
                                 </div>
                             </div>
                         </div>
-                        <h4 class="text-center mt-5">Recently Redeemed Awards</h4>
+                        <h3 class="text-center mt-5">Redeemed Awards</h3>
                     </div> 
                 </div>   
                 <div class="col-sm-3">
                     <div class="list-group">
-                        <h4 class="text-center">Recent Points Awarded</h4>
-                        {% if total is not None and total != 0 %}
-                            {% for point in points %}
-                            <!--<a href="#" class="list-group-item list-group-item-action active" aria-current="true">-->
-                                <div class="mb-3">
-                                    <div class="d-flex w-10 justify-content-between">
-                                        <h6 class="mb-1">{{ point.created_at }}</h6>
-                                        <small>{{ point.category.point }} points</small>
-                                    </div>
-                                    <p class="mb-1"><strong>{{ point.category.name }}</strong>: {{ point.description }}</p>
-                                    <small>By {{ point.teacher }}</small>
-                                </div>
-                            <!--</a>-->
-                            {% endfor %}
-                        {% else %}
-                            <h1>No Points awarded yet</h1>
-                        {% endif %}
+                        <h3 class="text-center">Recent Points Awarded</h3>
+                        {% for point in points %}
+                        <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                            <div class="d-flex w-10 justify-content-between">
+                                <h6 class="mb-1">{{ point.created_at }}</h6>
+                                <small>{{ point.category.point }} points</small>
+                            </div>
+                            <p class="mb-1">{{ point.category.name }}: {{ point.description }}</p>
+                            <small>By {{ point.teacher }}</small>
+                        </a>
+                        {% endfor %}
+                        <!--<a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-10 justify-content-between">
+                                <h5 class="mb-1">November 8, 2023</h5>
+                                <small class="text-body-secondary">40 points</small>
+                            </div>
+                            <p class="mb-1">Creativity: For designing the most impressive poster</p>
+                            <small class="text-body-secondary">by Mr. Chris</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-10 justify-content-between">
+                                <h5 class="mb-1">November 8, 2023</h5>
+                                <small class="text-body-secondary">20 points</small>
+                            </div>
+                            <p class="mb-1">Some placeholder content in a paragraph.</p>
+                            <small class="text-body-secondary">By Ms. Anze</small>
+                        </a>-->
                     </div>
                 </div>
             </div>
-            <div class="row me-3 mt-2">
+            <div class="row me-3">
                 {% if redeemed is not None and redeemed != 0 %}
-                    {% for item in items %}
-                        <div class="col-lg-3 col-md-3 col-sm-3">
-                            <div class="card bg-light text-dark align-items-center">
-                                <div class="card-body">
-                                    <h3 class="card-title text-center">{{ item.select_award.name }}</h3>
-                                    <p class="card-text text-center">{{ item.select_award.points }} Points</p>
-                                </div>
-                                <div class="card-footer text-center">
-                                    <small>{{ item.date_redeemed }}</small>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <h1>No Awards redeemed yet</h1>
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-3">Date</th>
+                                <th scope="col" class="col-3">Item</th>
+                                <th scope="col" class="col-3">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{ item.date_redeemed }}</td>
+                                    <td>{{ item.select_award.name }}</td>
+                                    <td>{{ item.select_award.points }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 {% endif %}
             </div>
         </div>

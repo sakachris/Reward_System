@@ -132,7 +132,7 @@ def teachers_dashboard(request):
 def students_dashboard(request):
     """listing the awarded points"""
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
-    points = PointTransaction.objects.filter(
+    '''points = PointTransaction.objects.filter(
         Q(student=request.user) &
         (
             Q(description__icontains=q) |
@@ -140,7 +140,8 @@ def students_dashboard(request):
             Q(student__username__icontains=q) |
             Q(category__name__icontains=q)
         )
-    )
+    )'''
+    points = PointTransaction.objects.filter(student=request.user).order_by('-created_at')[:4]
     # Get the total points for the student
     total_points = (
             PointTransaction.objects.filter(student=request.user)
@@ -155,7 +156,7 @@ def students_dashboard(request):
 
     bios = StudentProfile.objects.filter(user=request.user)[0]
 
-    redeemed_items = RedeemAward.objects.filter(student=request.user)
+    redeemed_items = RedeemAward.objects.filter(student=request.user).order_by('-date_redeemed')[:4]
 
     context = {
             'points': points,
