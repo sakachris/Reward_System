@@ -1,10 +1,23 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+</head>
+  <link rel="stylesheet" type="text/css" href="{% static 'base/css/index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+<body>
+	<div class="title">
+		<h1>Student Point Award System</h1>
+	</div>
+	<div class="login-box">
+		<form method="post">
+			{% csrf_token %}
+			{{ form.as_p }}
 
-{% block content %}
-  <h2>Login New</h2>
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-{% endblock %}
+			<input type="submit" value="LOGIN">
+			<!--<a href="#">Forgot password?</a>-->
+		</form>
+	</div>
+</body>
+</html>

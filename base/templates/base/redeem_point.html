@@ -1,13 +1,34 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}Redeem Point{% endblock %}
 
 {% block content %}
-<h2>Redeem Point</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Redeem</button>
-</form>
-<a href="{% url 'students_dashboard' %}">Back</a>
+<div class="container mt-3" style="width: 50%; font-size: 14px;">
+  <div class="text-center">
+    <h2>Redeem Point</h2>
+  </div>
+  <form method="POST" class="card p-3 mt-5" autocomplete="off">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-outline-primary mt-2" style="width: 90px;">Redeem</button>
+      <a href="{% url 'students_dashboard' %}" class="btn btn-outline-primary mt-2" style="width: 90px;">Back</a>
+    </div>
+  </form>
+
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{message}}
+        <a href="{%url 'students_dashboard' %}" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $("#id_select_award").select2({width: '100%'});
+</script>
 {% endblock %}

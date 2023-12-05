@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse_lazy
@@ -30,7 +31,9 @@ def award_point(request):
                 # Set the teacher ID before saving the form
                 form.instance.teacher_id = current_user.id
                 form.save()
-                return redirect('teachers_dashboard')
+                messages.success(request, "Point Awarded Successfully")
+                return redirect('award-point')
+                # return redirect('teachers_dashboard')
             else:
                 # Handle the case where the user is not a teacher
                 pass
@@ -51,7 +54,9 @@ def update_point(request, pk):
         form = AwardForm(request.POST, instance=point)
         if form.is_valid():
             form.save()
-            return redirect('teachers_dashboard')
+            messages.success(request, "Point Edited Successfully")
+            return redirect('award-point')
+            # return redirect('teachers_dashboard')
 
     context = {'form': form}
     return render(request, "base/award_point.html", context)
@@ -167,6 +172,7 @@ def students_dashboard(request):
 class CustomLoginView(LoginView):
     """ class for logging in users """
     form_class = CustomAuthenticationForm
+    template_name = 'base/login.html'
 
     def get_success_url(self):
         if self.request.user.is_teacher:
@@ -192,7 +198,8 @@ def redeem_point(request):
                 # Set the student ID before saving the form
                 form.instance.student_id = current_user.id
             form.save()
-            return redirect('students_dashboard')
+            messages.success(request, "Award Redeemed Successfully")
+            return redirect('redeem-point')
     else:
         form = ReedemForm(request=request)
 

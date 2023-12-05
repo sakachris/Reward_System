@@ -27,6 +27,15 @@ class CustomUserChangeForm(UserChangeForm):
 
 class AwardForm(ModelForm):
     """ point award form """
+    description = forms.CharField(
+        label='Description',
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control input-sm',
+                'placeholder': 'Reason for awarding the point'}
+        ),
+    )
 
     class Meta:
         model = PointTransaction
@@ -35,7 +44,11 @@ class AwardForm(ModelForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     """ authentication form """
-    pass
+    
+    '''class Meta:
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'fa fa-user', 'placeholder': 'USERNAME'}),
+        }'''
 
 
 class ReedemForm(forms.ModelForm):
@@ -45,9 +58,16 @@ class ReedemForm(forms.ModelForm):
         model = RedeemAward
         fields = ['select_award']
 
+        '''widgets = {
+            'select_award': forms.Select(attrs={'class': 'form-control'}),
+        }'''
+
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+        self.fields['select_award'].empty_label = 'Check available awards'
+
 
     def clean(self):
         cleaned_data = super().clean()
