@@ -1,0 +1,71 @@
+{% extends "base/dashboard.html" %}
+{% load static %}
+
+{% block title %}Teachers Dashboard{% endblock %}
+
+{% block content %}
+<div class="row d-flex">
+    <!--<h4 class="text-center mb-5">Points</h4>-->
+    <div class="col-md-4">
+        <div class="card p-3 bg-light text-dark align-items-center">
+            <img src="{% static 'base/assets/frame-30-r2Y.png' %}" class="card-img-top img-fluid" alt="total-points" style="width:60%; height:auto;">
+            <div class="card-body mt-2 p-0">
+                <h3 class="card-title text-center">{{ total_points }} Points</h3>
+                <p class="card-text text-center">Earned by {{ students_awarded }} Students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 bg-light text-dark align-items-center">
+            <img src="{% static 'base/assets/group-14-Gyr.png' %}" class="card-img-top img-fluid" alt="redeemed-points" style="width:43%; height:auto;">
+            <div class="card-body mt-2 p-0">
+                <h3 class="card-title text-center">{{ total_redeemed }} Points</h3>
+                <p class="card-text text-center">Redeemed by {{ students_redeemed }} Students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 bg-light text-dark align-items-center">
+            <img src="{% static 'base/assets/Group 15.png' %}" class="card-img-top img-fluid" alt="remaining-points" style="width:30%; height:auto;">
+            <div class="card-body mt-2 p-0">
+                <h3 class="card-title text-center">{{ total_balance }} Points</h6>
+                <p class="card-text text-center">Remaining</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="text-center m-3">
+        <h3>Awarded Points</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Description</th>
+                <th scope="col">Points</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for point in points %}
+                    <tr>
+                        <td>{{ point.student.first_name }} {{ point.student.last_name }}</td>
+                        <td>{{ point.category.name }}</td>
+                        <td>{{ point.description }}</td>
+                        <td>{{ point.category.point }}</td>
+                        <td>
+                            <a href="{% url 'update-point' point.id %}">Edit</a>
+                            <a href="{% url 'delete-point' point.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
