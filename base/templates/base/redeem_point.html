@@ -13,7 +13,7 @@
     {{ form|crispy }}
     <div class="d-flex justify-content-between">
       <button type="submit" class="btn btn-outline-primary mt-2" style="width: 90px;">Redeem</button>
-      <a href="{% url 'students_dashboard' %}" class="btn btn-outline-primary mt-2" style="width: 90px;">Back</a>
+      <button class="btn btn-outline-primary mt-2" onclick="goBack()">Back</button>
     </div>
   </form>
 
@@ -30,5 +30,9 @@
 {% block scripts %}
 <script>
   $("#id_select_award").select2({width: '100%'});
+
+  function goBack() {
+    window.history.back();
+  }
 </script>
 {% endblock %}

@@ -14,7 +14,7 @@
     {{ form|crispy }}
     <div class="d-flex justify-content-between">
       <button type="submit" class="btn btn-primary">Award</button>
-      <a href="{% url 'teachers_dashboard' %}" class="btn btn-primary">Back</a>
+      <button class="btn btn-primary" onclick="goBack()">Back</button>
     </div>
   </form>
   {% for message in messages %}
@@ -32,5 +32,9 @@
 <script>
   $("#id_student").select2({width: '100%'});
   $("#id_category").select2({width: '100%'});
+
+  function goBack() {
+    window.history.back();
+  }
 </script>
 {% endblock %}

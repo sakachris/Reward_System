@@ -1,0 +1,41 @@
+{% extends "base/dashboard.html" %}
+{% load static %}
+
+{% block title %}Points Redeemed{% endblock %}
+
+{% block content %}
+<div class="row align-items-start">
+    <div class="text-center">
+        <h3>Redeemed Points</h3>
+    </div>
+    <form class="form-inline d-flex justify-content-end" method="get" action="{% url 'points-awarded' %}">
+        <div class="form-group me-2">
+          <input type="text" class="form-control" name="q" placeholder="Search ...">
+        </div>
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <button class="btn btn-secondary ml-2" onclick="">Clear</button>
+      </form>
+    <div class="table-responsive" style="max-height: 480px;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Item</th>
+                <th scope="col">Description</th>
+                <th scope="col">Points</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.date_redeemed }}</td>
+                        <td>{{ item.select_award.name }}</td>
+                        <td>{{ item.select_award.description }}</td>
+                        <td>{{ item.select_award.points }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
