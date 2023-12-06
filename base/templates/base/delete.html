@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+
+{% block title %}Delete Point{% endblock %}
+
+{% block content %}
+<!--<form method="post" action="">
+  {% csrf_token %}
+  <p>Are you sure you want to delete {{obj}}?</p>
+  <a href="{{request.META.HTTP_REFERER}}">Go Back</a>
+  <input type="submit" value="Confirm" />
+</form>-->
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <form method="post" action="" class="text-center">
+        {% csrf_token %}
+        <p class="lead">Are you sure you want to delete <strong>{{ obj }}</strong>?</p>
+        <div class="mt-4">
+          <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Go Back</a>
+          <input type="submit" value="Confirm" class="btn btn-danger ml-2">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

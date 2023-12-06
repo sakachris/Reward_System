@@ -1,0 +1,83 @@
+{% extends "base/dashboard.html" %}
+{% load static %}
+{% block title %}Teachers Dashboard{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-around align-contents-center">
+        <div class="col-sm-9">
+            <div class="row d-flex">
+                <h4 class="text-center mb-5">Points</h4>
+                <div class="col-md-4">
+                    <div class="card p-5 bg-light text-dark align-items-center">
+                        <img src="{% static 'base/assets/frame-30-r2Y.png' %}" class="card-img-top img-fluid" alt="total-points" style="width:60%; height:auto;">
+                        <div class="card-body mt-2 p-0">
+                            <h3 class="card-title text-center">{{ total }} Points</h3>
+                            <p class="card-text text-center">Earned</p>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-md-4">
+                    <div class="card p-5 bg-light text-dark align-items-center">
+                        <img src="{% static 'base/assets/group-14-Gyr.png' %}" class="card-img-top img-fluid" alt="redeemed-points" style="width:43%; height:auto;">
+                        <div class="card-body mt-2 p-0">
+                            <h3 class="card-title text-center">{{ redeemed }} Points</h3>
+                            <p class="card-text text-center">Redeemed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card p-5 bg-light text-dark align-items-center">
+                        <img src="{% static 'base/assets/group-15.png' %}" class="card-img-top img-fluid" alt="remaining-points" style="width:30%; height:auto;">
+                        <div class="card-body mt-2 p-0">
+                            <h3 class="card-title text-center">{{ balance }} Points</h6>
+                            <p class="card-text text-center">Remaining</p>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="text-center mt-5">Recently Redeemed Awards</h4>
+            </div> 
+        </div>   
+        <div class="col-sm-3">
+            <div class="list-group">
+                <h4 class="text-center">Recent Points Awarded</h4>
+                {% if total is not None and total != 0 %}
+                    {% for point in points %}
+                    <!--<a href="#" class="list-group-item list-group-item-action active" aria-current="true">-->
+                        <div class="mb-3">
+                            <div class="d-flex w-10 justify-content-between">
+                                <h6 class="mb-1">{{ point.created_at }}</h6>
+                                <small>{{ point.category.point }} points</small>
+                            </div>
+                            <p class="mb-1"><strong>{{ point.category.name }}</strong>: {{ point.description }}</p>
+                            <small>By {{ point.teacher }}</small>
+                        </div>
+                    <!--</a>-->
+                    {% endfor %}
+                {% else %}
+                    <h1>No Points awarded yet</h1>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row me-3 mt-2">
+        {% if redeemed is not None and redeemed != 0 %}
+            {% for item in items %}
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="card bg-light text-dark align-items-center">
+                        <div class="card-body">
+                            <h3 class="card-title text-center">{{ item.select_award.name }}</h3>
+                            <p class="card-text text-center">{{ item.select_award.points }} Points</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <small>{{ item.date_redeemed }}</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h1>No Awards redeemed yet</h1>
+        {% endif %}
+    </div>
+{% endblock %}

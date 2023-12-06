@@ -1,0 +1,7 @@
+.custom-container {
+    background-color: #3498db; /* Your custom background color */
+    padding: 20px; /* Adjust padding as needed */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    margin: 0 auto; /* Center the container horizontally */
+    /*max-width: 600px; Set a maximum width for the container */
+}
