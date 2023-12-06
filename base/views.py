@@ -11,7 +11,13 @@ from .forms import (
         CustomAuthenticationForm,
         ReedemForm
 )
-from .models import PointTransaction, CustomUser, StudentProfile, RedeemAward, TeacherProfile
+from .models import (
+        PointTransaction,
+        CustomUser,
+        StudentProfile,
+        RedeemAward,
+        TeacherProfile
+)
 from django.http import HttpResponse
 
 
@@ -78,10 +84,18 @@ def delete_point(request, pk):
                   login_url='login')
 def teachers_dashboard(request):
     """listing the awarded points"""
-    points = PointTransaction.objects.filter(teacher=request.user).order_by('-created_at')[:5]
+    points = (
+        PointTransaction.objects
+        .filter(teacher=request.user)
+        .order_by('-created_at')[:5]
+    )
 
-    total_points = PointTransaction.objects.all().aggregate(Sum('category__point'))['category__point__sum'] or 0
-    
+    total_points = (
+        PointTransaction.objects.all()
+        .aggregate(Sum('category__point'))
+        .get('category__point__sum', 0) or 0
+    )
+
     awards = PointTransaction.objects.values('student__username').distinct()
     pts = {
         award['student__username']: (
@@ -94,7 +108,11 @@ def teachers_dashboard(request):
     ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
     no_of_students_awarded = len(ptss)
 
-    total_redeemed = RedeemAward.objects.all().aggregate(Sum('select_award__points'))['select_award__points__sum'] or 0
+    total_redeemed = (
+        RedeemAward.objects.all()
+        .aggregate(Sum('select_award__points'))
+        .get('select_award__points__sum', 0) or 0
+    )
 
     redeems = RedeemAward.objects.values('student__username').distinct()
     rdm = {
@@ -179,7 +197,11 @@ def student_awards(request):
                   login_url='login')
 def students_dashboard(request):
     """listing the awarded points"""
-    points = PointTransaction.objects.filter(student=request.user).order_by('-created_at')[:4]
+    points = (
+        PointTransaction.objects
+        .filter(student=request.user)
+        .order_by('-created_at')[:4]
+    )
     # Get the total points for the student
     total_points = (
             PointTransaction.objects.filter(student=request.user)
@@ -196,7 +218,11 @@ def students_dashboard(request):
 
     bios = StudentProfile.objects.filter(user=request.user)[0]
 
-    redeemed_items = RedeemAward.objects.filter(student=request.user).order_by('-date_redeemed')[:4]
+    redeemed_items = (
+        RedeemAward.objects
+        .filter(student=request.user)
+        .order_by('-date_redeemed')[:4]
+    )
 
     context = {
             'points': points,

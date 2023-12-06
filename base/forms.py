@@ -44,11 +44,6 @@ class AwardForm(ModelForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     """ authentication form """
-    
-    '''class Meta:
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'fa fa-user', 'placeholder': 'USERNAME'}),
-        }'''
 
 
 class ReedemForm(forms.ModelForm):
@@ -62,12 +57,10 @@ class ReedemForm(forms.ModelForm):
             'select_award': forms.Select(attrs={'class': 'form-control'}),
         }'''
 
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['select_award'].empty_label = 'Check available awards'
-
 
     def clean(self):
         cleaned_data = super().clean()
