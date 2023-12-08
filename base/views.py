@@ -19,6 +19,7 @@ from .models import (
         TeacherProfile
 )
 from django.http import HttpResponse
+from .utils import get_current_tenant
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
@@ -31,11 +32,13 @@ def award_point(request):
         form = AwardForm(request.POST)
         if form.is_valid():
             current_user = request.user
+            current_school = get_current_tenant()
 
             # Check if the user is a teacher
-            if current_user.is_authenticated and current_user.is_teacher:
+            if current_user.is_authenticated and current_user.is_teacher and current_school:
                 # Set the teacher ID before saving the form
                 form.instance.teacher_id = current_user.id
+                form.instance.school = current_school
                 form.save()
                 messages.success(request, "Point Awarded Successfully")
                 return redirect('award-point')
@@ -84,23 +87,30 @@ def delete_point(request, pk):
                   login_url='login')
 def teachers_dashboard(request):
     """listing the awarded points"""
+    current_school = get_current_tenant()  # Get the current school
+
+    if not current_school:
+        # Handle the case where the school is not set
+        messages.error(request, "School not set. Please contact administrator.")
+        return redirect('login')
+
     points = (
         PointTransaction.objects
-        .filter(teacher=request.user)
+        .filter(teacher=request.user, school=current_school)
         .order_by('-created_at')
     )
 
     total_points = (
-        PointTransaction.objects.all()
+        PointTransaction.objects.filter(school=current_school)
         .aggregate(Sum('category__point'))
         .get('category__point__sum', 0) or 0
     )
 
-    awards = PointTransaction.objects.values('student__username').distinct()
+    awards = PointTransaction.objects.filter(school=current_school).values('student__username').distinct()
     pts = {
         award['student__username']: (
             PointTransaction.objects
-            .filter(student__username=award['student__username'])
+            .filter(student__username=award['student__username'], school=current_school)
             .aggregate(Sum('category__point'))['category__point__sum'] or 0
         )
         for award in awards
@@ -109,16 +119,16 @@ def teachers_dashboard(request):
     no_of_students_awarded = len(ptss)
 
     total_redeemed = (
-        RedeemAward.objects.all()
+        RedeemAward.objects.filter(school=current_school)
         .aggregate(Sum('select_award__points'))
         .get('select_award__points__sum', 0) or 0
     )
 
-    redeems = RedeemAward.objects.values('student__username').distinct()
+    redeems = RedeemAward.objects.filter(school=current_school).values('student__username').distinct()
     rdm = {
         redeem['student__username']: (
             RedeemAward.objects
-            .filter(student__username=redeem['student__username'])
+            .filter(student__username=redeem['student__username'], school=current_school)
             .aggregate(Sum('select_award__points'))
             .get('select_award__points__sum', 0) or 0
         )
@@ -129,7 +139,7 @@ def teachers_dashboard(request):
 
     total_balance = total_points - total_redeemed
 
-    bios = TeacherProfile.objects.filter(user=request.user)[0]
+    bios = TeacherProfile.objects.filter(user=request.user, school=current_school)[0]
 
     context = {
             'points': points,
@@ -149,8 +159,10 @@ def teachers_dashboard(request):
                   login_url='login')
 def student_points(request):
     """listing the awarded points"""
+    current_school = get_current_tenant()
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
+        Q(school=current_school) &
         (
             Q(description__icontains=q) |
             Q(created_at__icontains=q) |
@@ -161,7 +173,7 @@ def student_points(request):
         )
     )
 
-    bios = TeacherProfile.objects.filter(user=request.user)[0]
+    bios = TeacherProfile.objects.filter(user=request.user, school=current_school)[0]
 
     context = {
             'points': points,
@@ -174,17 +186,19 @@ def student_points(request):
                   login_url='login')
 def student_awards(request):
     """listing the redeemed awards"""
+    current_school = get_current_tenant()
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     items = RedeemAward.objects.filter(
-        Q(select_award__name__icontains=q) |
+        Q(school=current_school) &
+        (Q(select_award__name__icontains=q) |
         Q(date_redeemed__icontains=q) |
         Q(student__username__icontains=q) |
         Q(student__first_name__icontains=q) |
         Q(student__last_name__icontains=q) |
-        Q(select_award__points__icontains=q)
+        Q(select_award__points__icontains=q))
     )
 
-    bios = TeacherProfile.objects.filter(user=request.user)[0]
+    bios = TeacherProfile.objects.filter(user=request.user, school=current_school)[0]
 
     context = {
             'items': items,
@@ -197,30 +211,31 @@ def student_awards(request):
                   login_url='login')
 def students_dashboard(request):
     """listing the awarded points"""
+    current_school = get_current_tenant()
     points = (
         PointTransaction.objects
-        .filter(student=request.user)
+        .filter(student=request.user, school=current_school)
         .order_by('-created_at')[:4]
     )
     # Get the total points for the student
     total_points = (
-            PointTransaction.objects.filter(student=request.user)
+            PointTransaction.objects.filter(student=request.user, school=current_school)
             .aggregate(Sum('category__point'))['category__point__sum'] or 0
     )
 
     total_redeemed = (
-            RedeemAward.objects.filter(student=request.user)
+            RedeemAward.objects.filter(student=request.user, school=current_school)
             .aggregate(Sum('select_award__points'))
             .get('select_award__points__sum', 0) or 0
     )
 
     points_balance = total_points - total_redeemed
 
-    bios = StudentProfile.objects.filter(user=request.user)[0]
+    bios = StudentProfile.objects.filter(user=request.user, school=current_school)[0]
 
     redeemed_items = (
         RedeemAward.objects
-        .filter(student=request.user)
+        .filter(student=request.user, school=current_school)
         .order_by('-date_redeemed')[:4]
     )
 
@@ -240,9 +255,10 @@ def students_dashboard(request):
                   login_url='login')
 def points_awarded(request):
     """listing the awarded points"""
+    current_school = get_current_tenant()
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
-        Q(student=request.user) &
+        Q(student=request.user, school=current_school) &
         (
             Q(description__icontains=q) |
             Q(created_at__icontains=q) |
@@ -253,7 +269,7 @@ def points_awarded(request):
         )
     )
 
-    bios = StudentProfile.objects.filter(user=request.user)[0]
+    bios = StudentProfile.objects.filter(user=request.user, school=current_school)[0]
 
     context = {
             'points': points,
@@ -267,9 +283,10 @@ def points_awarded(request):
                   login_url='login')
 def points_redeemed(request):
     """listing the awarded points"""
+    current_school = get_current_tenant()
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points_redeemed = RedeemAward.objects.filter(
-        Q(student=request.user) &
+        Q(student=request.user, school=current_school) &
         (
             Q(select_award__name__icontains=q) |
             Q(select_award__description__icontains=q) |
@@ -281,7 +298,7 @@ def points_redeemed(request):
         )
     )
 
-    bios = StudentProfile.objects.filter(user=request.user)[0]
+    bios = StudentProfile.objects.filter(user=request.user, school=current_school)[0]
 
     context = {
             'items': points_redeemed,
@@ -291,10 +308,36 @@ def points_redeemed(request):
     return render(request, "base/points_redeemed.html", context)
 
 
+'''class CustomLoginView(LoginView):
+    """ class for logging in users """
+    form_class = CustomAuthenticationForm
+    template_name = 'base/login.html'
+
+    def get_success_url(self):
+        if self.request.user.is_teacher:
+            return reverse_lazy('teachers_dashboard')
+        elif self.request.user.is_student:
+            return reverse_lazy('students_dashboard')
+        else:
+            return reverse_lazy('admin:index')'''
+
+
 class CustomLoginView(LoginView):
     """ class for logging in users """
     form_class = CustomAuthenticationForm
     template_name = 'base/login.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        current_school = get_current_tenant()  # Get the current school
+
+        if current_school:
+            # Set the school for the logged-in user
+            self.request.user.school = current_school
+            self.request.user.save()
+
+        return response
 
     def get_success_url(self):
         if self.request.user.is_teacher:
@@ -315,10 +358,12 @@ def redeem_point(request):
         form = ReedemForm(request.POST, request=request)
         if form.is_valid():
             current_user = request.user
+            current_school = get_current_tenant()
             # Check if the user is a student
-            if current_user.is_authenticated and current_user.is_student:
+            if current_user.is_authenticated and current_user.is_student and current_school:
                 # Set the student ID before saving the form
                 form.instance.student_id = current_user.id
+                form.instance.school = current_school
             form.save()
             messages.success(request, "Award Redeemed Successfully")
             return redirect('redeem-point')

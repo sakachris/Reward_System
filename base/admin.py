@@ -6,7 +6,8 @@ from .models import (
         CustomUser,
         StudentProfile,
         TeacherProfile,
-        AwardItem
+        AwardItem,
+        School
 )
 
 
@@ -61,3 +62,17 @@ class TeacherProfileAdmin(admin.ModelAdmin):
 
     def user(self, obj):
         return obj.user.username
+
+
+class SchoolAdmin(UserAdmin):
+    list_display = ('name', 'subdomain', 'admin_user', 'school')  # Update based on your needs
+    search_fields = ('name', 'subdomain')
+    readonly_fields = ('admin_user',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'subdomain')}),
+        ('Admin User', {'fields': ('admin_user',)}),
+        ('School', {'fields': ('school',)}),  # Add this line to include the school in the admin
+    )
+
+admin.site.register(School, SchoolAdmin)

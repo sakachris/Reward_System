@@ -1,12 +1,28 @@
 from django.db import models, transaction
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
+class School(models.Model):
+    name = models.CharField(max_length=100)
+    subdomain = models.CharField(max_length=50, unique=True)
+    admin_user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
+    # Add a field to store the school in your model
+    # Note: You can adjust the choices based on your specific needs
+    SCHOOL_CHOICES = (
+        ('school1', 'School 1'),
+        ('school2', 'School 2'),
+        # Add more schools as needed
+    )
+    school = models.CharField(max_length=20, choices=SCHOOL_CHOICES, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 class CustomUser(AbstractUser):
-    """ customizing the user model """
+    """ Customizing the user model """
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=30, blank=False)
     last_name = models.CharField(max_length=30, blank=False)
     is_student = models.BooleanField(default=False)
@@ -20,6 +36,7 @@ class CustomUser(AbstractUser):
 
 class StudentProfile(models.Model):
     """ model for storing student's extra data """
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
                                 primary_key=True)
     grade = models.CharField(max_length=10, null=True, blank=True)
@@ -32,6 +49,7 @@ class StudentProfile(models.Model):
 
 class TeacherProfile(models.Model):
     """ model for storing teacher's extra data """
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
                                 primary_key=True)
     designation = models.CharField(max_length=30, null=True, blank=True)
@@ -42,14 +60,14 @@ class TeacherProfile(models.Model):
 @receiver(post_save, sender=CustomUser)
 def create_student_profile(sender, instance, created, **kwargs):
     if created and instance.is_student:
-        StudentProfile.objects.get_or_create(user=instance)
+        StudentProfile.objects.get_or_create(user=instance, school=instance.school)
 
 
 @receiver(post_save, sender=CustomUser)
 def save_student_profile(sender, instance, **kwargs):
     if instance.is_student:
         student_profile, created = (
-                StudentProfile.objects.get_or_create(user=instance)
+                StudentProfile.objects.get_or_create(user=instance, school=instance.school)
         )
         if not created:
             student_profile.save()
@@ -58,14 +76,14 @@ def save_student_profile(sender, instance, **kwargs):
 @receiver(post_save, sender=CustomUser)
 def create_teacher_profile(sender, instance, created, **kwargs):
     if created and instance.is_teacher:
-        TeacherProfile.objects.create(user=instance)
+        TeacherProfile.objects.create(user=instance, school=instance.school)
 
 
 @receiver(post_save, sender=CustomUser)
 def save_teacher_profile(sender, instance, **kwargs):
     if instance.is_teacher:
         teacher_profile, created = (
-                TeacherProfile.objects.get_or_create(user=instance)
+                TeacherProfile.objects.get_or_create(user=instance, school=instance.school)
         )
         if not created:
             teacher_profile.save()
@@ -73,6 +91,7 @@ def save_teacher_profile(sender, instance, **kwargs):
 
 class PointCategory(models.Model):
     """ Category list for awarding points """
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
     point = models.PositiveIntegerField(null=False, blank=False)
@@ -85,6 +104,7 @@ class PointCategory(models.Model):
 
 class PointTransaction(models.Model):
     """ Class for awarding points to students """
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     student = models.ForeignKey(
         CustomUser,
         related_name='receiving_point',
@@ -121,6 +141,7 @@ def set_teacher(sender, instance, **kwargs):
 
 class AwardItem(models.Model):
     """ gifts, textbooks, trips, etc """
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     points = models.IntegerField()
     description = models.TextField(null=True, blank=True)
@@ -137,6 +158,7 @@ class AwardItem(models.Model):
 
 class RedeemAward(models.Model):
     """ model for redeeming award """
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     select_award = models.ForeignKey(
         AwardItem,
         on_delete=models.CASCADE,
