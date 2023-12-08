@@ -87,7 +87,7 @@ def teachers_dashboard(request):
     points = (
         PointTransaction.objects
         .filter(teacher=request.user)
-        .order_by('-created_at')[:5]
+        .order_by('-created_at')
     )
 
     total_points = (
