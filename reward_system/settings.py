@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+'''INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,13 +40,34 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-]
+]'''
+
+SHARED_APPS = (
+    'django_tenants',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'schools.apps.SchoolsConfig',
+    'crispy_forms',
+    'crispy_bootstrap5',
+)
+
+TENANT_APPS = (
+    # your tenant-specific apps
+    'base.apps.BaseConfig',
+)
+
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -90,7 +111,8 @@ WSGI_APPLICATION = 'reward_system.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django_tenants.postgresql_backend',
         'NAME': 'rewardsystem',#database name
         'USER': 'admin',#projectuser
         'PASSWORD': 'Habakkuk',#password
@@ -99,6 +121,9 @@ DATABASES = {
     }
 }
 
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -147,3 +172,7 @@ AUTH_USER_MODEL = "base.CustomUser"
 LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+TENANT_MODEL = "schools.School" # app.Model
+
+TENANT_DOMAIN_MODEL = "schools.Domain"  # app.Model

@@ -6,7 +6,7 @@ from .models import (
         CustomUser,
         StudentProfile,
         TeacherProfile,
-        AwardItem
+        AwardItem,
 )
 
 
@@ -61,3 +61,4 @@ class TeacherProfileAdmin(admin.ModelAdmin):
 
     def user(self, obj):
         return obj.user.username
+    
