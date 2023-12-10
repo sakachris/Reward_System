@@ -23,7 +23,7 @@ class CustomUserAdmin(UserAdmin):
         ),
         (
             'User Type',
-            {'fields': ('is_student', 'is_teacher')}
+            {'fields': ('is_student', 'is_teacher', 'school')}
         ),
     )
     list_display = [
@@ -64,15 +64,15 @@ class TeacherProfileAdmin(admin.ModelAdmin):
         return obj.user.username
 
 
-class SchoolAdmin(UserAdmin):
-    list_display = ('name', 'subdomain', 'admin_user', 'school')  # Update based on your needs
+'''class SchoolAdmin(UserAdmin):
+    list_display = ('name', 'subdomain', 'school')  # Update based on your needs
     search_fields = ('name', 'subdomain')
     readonly_fields = ('admin_user',)
 
     fieldsets = (
         (None, {'fields': ('name', 'subdomain')}),
-        ('Admin User', {'fields': ('admin_user',)}),
+        #('Admin User', {'fields': ('admin_user',)}),
         ('School', {'fields': ('school',)}),  # Add this line to include the school in the admin
-    )
+    )'''
 
-admin.site.register(School, SchoolAdmin)
+admin.site.register(School)

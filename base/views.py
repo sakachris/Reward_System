@@ -19,7 +19,7 @@ from .models import (
         TeacherProfile
 )
 from django.http import HttpResponse
-from .utils import get_current_tenant
+# from .utils import get_current_tenant
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
@@ -32,7 +32,7 @@ def award_point(request):
         form = AwardForm(request.POST)
         if form.is_valid():
             current_user = request.user
-            current_school = get_current_tenant()
+            current_school = current_user.school
 
             # Check if the user is a teacher
             if current_user.is_authenticated and current_user.is_teacher and current_school:
@@ -87,7 +87,7 @@ def delete_point(request, pk):
                   login_url='login')
 def teachers_dashboard(request):
     """listing the awarded points"""
-    current_school = get_current_tenant()  # Get the current school
+    current_school = request.user.school #Get current school
 
     if not current_school:
         # Handle the case where the school is not set
@@ -159,7 +159,7 @@ def teachers_dashboard(request):
                   login_url='login')
 def student_points(request):
     """listing the awarded points"""
-    current_school = get_current_tenant()
+    current_school = request.user.school
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
         Q(school=current_school) &
@@ -186,7 +186,7 @@ def student_points(request):
                   login_url='login')
 def student_awards(request):
     """listing the redeemed awards"""
-    current_school = get_current_tenant()
+    current_school = request.user.school
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     items = RedeemAward.objects.filter(
         Q(school=current_school) &
@@ -211,7 +211,7 @@ def student_awards(request):
                   login_url='login')
 def students_dashboard(request):
     """listing the awarded points"""
-    current_school = get_current_tenant()
+    current_school = request.user.school
     points = (
         PointTransaction.objects
         .filter(student=request.user, school=current_school)
@@ -255,7 +255,7 @@ def students_dashboard(request):
                   login_url='login')
 def points_awarded(request):
     """listing the awarded points"""
-    current_school = get_current_tenant()
+    current_school = request.user.school
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points = PointTransaction.objects.filter(
         Q(student=request.user, school=current_school) &
@@ -283,7 +283,7 @@ def points_awarded(request):
                   login_url='login')
 def points_redeemed(request):
     """listing the awarded points"""
-    current_school = get_current_tenant()
+    current_school = request.user.school
     q = request.GET.get('q') if request.GET.get('q') is not None else ''
     points_redeemed = RedeemAward.objects.filter(
         Q(student=request.user, school=current_school) &
@@ -330,7 +330,7 @@ class CustomLoginView(LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        current_school = get_current_tenant()  # Get the current school
+        current_school = self.request.user.school  # Get the current school
 
         if current_school:
             # Set the school for the logged-in user
@@ -358,7 +358,7 @@ def redeem_point(request):
         form = ReedemForm(request.POST, request=request)
         if form.is_valid():
             current_user = request.user
-            current_school = get_current_tenant()
+            current_school = current_user.school
             # Check if the user is a student
             if current_user.is_authenticated and current_user.is_student and current_school:
                 # Set the student ID before saving the form

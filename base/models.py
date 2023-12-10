@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 class School(models.Model):
     name = models.CharField(max_length=100)
     subdomain = models.CharField(max_length=50, unique=True)
-    admin_user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
+    # admin_user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
     # Add a field to store the school in your model
     # Note: You can adjust the choices based on your specific needs
     SCHOOL_CHOICES = (
@@ -36,7 +36,7 @@ class CustomUser(AbstractUser):
 
 class StudentProfile(models.Model):
     """ model for storing student's extra data """
-    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
+    # school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,
                                 primary_key=True)
     grade = models.CharField(max_length=10, null=True, blank=True)
@@ -91,7 +91,7 @@ def save_teacher_profile(sender, instance, **kwargs):
 
 class PointCategory(models.Model):
     """ Category list for awarding points """
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
     point = models.PositiveIntegerField(null=False, blank=False)
@@ -104,7 +104,7 @@ class PointCategory(models.Model):
 
 class PointTransaction(models.Model):
     """ Class for awarding points to students """
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     student = models.ForeignKey(
         CustomUser,
         related_name='receiving_point',
@@ -141,7 +141,7 @@ def set_teacher(sender, instance, **kwargs):
 
 class AwardItem(models.Model):
     """ gifts, textbooks, trips, etc """
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     points = models.IntegerField()
     description = models.TextField(null=True, blank=True)
@@ -158,7 +158,7 @@ class AwardItem(models.Model):
 
 class RedeemAward(models.Model):
     """ model for redeeming award """
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     select_award = models.ForeignKey(
         AwardItem,
         on_delete=models.CASCADE,
