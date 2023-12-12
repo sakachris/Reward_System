@@ -113,9 +113,9 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'rewardsystem',#database name
-        'USER': 'admin',#projectuser
-        'PASSWORD': 'Habakkuk',#password
+        'NAME': 'rewardsystem',  # database name
+        'USER': 'admin',  # projectuser
+        'PASSWORD': 'Habakkuk',  # password
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -173,7 +173,7 @@ LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-TENANT_MODEL = "schools.School" # app.Model
+TENANT_MODEL = "schools.School"  # app.Model
 
 TENANT_DOMAIN_MODEL = "schools.Domain"  # app.Model
 
