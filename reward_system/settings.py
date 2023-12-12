@@ -177,6 +177,9 @@ TENANT_MODEL = "schools.School"  # app.Model
 
 TENANT_DOMAIN_MODEL = "schools.Domain"  # app.Model
 
+PUBLIC_SCHEMA_URLCONF = "schools.urls"
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587  # or the appropriate port for your SMTP server

@@ -7,9 +7,6 @@ from django_tenants.utils import get_public_schema_name
 
 @admin.register(School)
 class RestrictedModelAdmin(admin.ModelAdmin):
-    '''def has_view_permission(self, request, obj=None):
-        # Check if the user is the main superuser
-        return request.user.is_superuser and not request.tenant'''
 
     list_display = ('name', 'created_on')
 
