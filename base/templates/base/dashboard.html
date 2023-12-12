@@ -19,10 +19,17 @@
             <h1>{{ request.tenant.name }}</h1>
         </div>
         <div class="d-flex justify-content-end align-items-center">
-            <div class="px-3">
-                <a href="{% url 'logout' %}">
-                    <img src="{% static 'base/assets/user-logout.png' %}" alt="profile-icon" class="float-end align-contents-center rounded-circle" style="position:relative; border:4px solid blueviolet; width: 48px; height: 48px;">
-                </a>
+            <div class="user-profile px-3">
+                <button class="btn btn-primary dropdown-toggle" style="background-color:hsl(248, 53%, 58%); type="button" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src="{% static 'base/assets/user.png' %}" alt="User Profile" style="position:relative; width: 48px; height: 48px;">
+                </button>
+                
+                <!-- Dropdown menu -->
+                <ul class="dropdown-menu" aria-labelledby="userProfileDropdown">
+                  <li><a class="dropdown-item" href="{% url 'password_change' %}">Reset Password</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
             </div>
             <div class="d-flex flex-column align-items-start">
                 <h5 class="text-end font-weight-bold">{{ bios.user.first_name }} {{ bios.user.last_name }}</h5>
@@ -126,6 +133,7 @@
                 {% endblock %}
             </div>
         </div>
-    </section>  
+    </section>
+
 </body>
 </html>

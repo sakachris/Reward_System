@@ -176,3 +176,10 @@ LOGOUT_REDIRECT_URL = "/"
 TENANT_MODEL = "schools.School" # app.Model
 
 TENANT_DOMAIN_MODEL = "schools.Domain"  # app.Model
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # or the appropriate port for your SMTP server
+EMAIL_USE_TLS = True  # or False if not using TLS
+EMAIL_HOST_USER = 'pointsrewardsystem@gmail.com'
+EMAIL_HOST_PASSWORD = 'rpmtcqayahpbrlqg'
