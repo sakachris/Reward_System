@@ -7,7 +7,7 @@ def search_and_redirect(request):
     """listing the awarded points"""
     q = request.GET.get('q')
     if q is not None and q != "":
-        points = School.objects.filter(Q(name__icontains=q))
+        points = School.objects.filter(Q(schema_name__icontains=q))
     else:
         points = {}
     return render(request, 'schools/search.html', {'schools': points})

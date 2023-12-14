@@ -13,10 +13,12 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <!--<body style="background-color:hsl(248, 53%, 58%);">-->
-<body>
+<body style="background-color:hsl(248, 53%, 58%);">
   <main>
-    {% block content %}
-    {% endblock %}
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+      {% block content %}
+      {% endblock %}
+    </div>
   </main>
   {% block scripts %}
   {% endblock %}
