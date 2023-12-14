@@ -6,7 +6,7 @@ from .models import (
         CustomUser,
         StudentProfile,
         TeacherProfile,
-        AwardItem
+        AwardItem,
 )
 
 
