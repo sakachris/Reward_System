@@ -1,0 +1,27 @@
+{% extends "schools/base.html" %}
+{% block content %}
+<div class="row align-items-start">
+    <div class="text-center">
+        <h3>Search School</h3>
+    </div>
+    <form class="form-inline d-flex justify-content-start" method="get" action="{% url 'search_and_redirect' %}">
+        <div class="form-group me-2">
+            <input type="text" class="form-control" name="q" placeholder="Search ...">
+        </div>
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <button class="btn btn-secondary ml-2" onclick="">Clear</button>
+    </form>
+    <div class="">
+        <h2>Search Results</h2>
+        {% if schools %}
+        <ul>
+            {% for school in schools %}
+            <li><a href="{% url 'school_login' school.schema_name %}">{{ school.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No matching tenants found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+<form method="post" action="{% url 'search_and_redirect' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+
+<h2>Search Results</h2>
+{% if schools %}
+    <ul>
+        {% for school in schools %}
+            <li><a href="{% url 'school_login' school.schema_name %}">{{ school.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No matching tenants found.</p>
+{% endif %}
