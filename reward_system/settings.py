@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+'''INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,13 +40,34 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-]
+]'''
+
+SHARED_APPS = (
+    'django_tenants',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'schools.apps.SchoolsConfig',
+    'crispy_forms',
+    'crispy_bootstrap5',
+)
+
+TENANT_APPS = (
+    # your tenant-specific apps
+    'base.apps.BaseConfig',
+)
+
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,13 +102,28 @@ WSGI_APPLICATION = 'reward_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}'''
+
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': 'rewardsystem',  # database name
+        'USER': 'admin',  # projectuser
+        'PASSWORD': 'Habakkuk',  # password
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -136,3 +172,17 @@ AUTH_USER_MODEL = "base.CustomUser"
 LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+TENANT_MODEL = "schools.School"  # app.Model
+
+TENANT_DOMAIN_MODEL = "schools.Domain"  # app.Model
+
+PUBLIC_SCHEMA_URLCONF = "schools.urls"
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # or the appropriate port for your SMTP server
+EMAIL_USE_TLS = True  # or False if not using TLS
+EMAIL_HOST_USER = 'pointsrewardsystem@gmail.com'
+EMAIL_HOST_PASSWORD = 'rpmtcqayahpbrlqg'
