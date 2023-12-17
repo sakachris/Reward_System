@@ -18,3 +18,4 @@ def school_login(request, schema_name):
     domain = school.domains.all()[0]
 
     return redirect(f'http://{domain}:8000')
+    # return redirect(f'http://{domain}')
