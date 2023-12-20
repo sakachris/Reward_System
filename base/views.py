@@ -18,9 +18,9 @@ from .models import (
         RedeemAward,
         TeacherProfile
 )
-from django.http import HttpResponse
 
 
+# Decorated view function allowing only authenticated teachers to access
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
                   login_url='login')
 def award_point(request):
@@ -50,17 +50,28 @@ def award_point(request):
     return render(request, "base/award_point.html", context)
 
 
+# Decorated view function allowing only authenticated teachers to access
 @user_passes_test(lambda u: u.is_authenticated and u.is_teacher,
                   login_url='login')
 def update_point(request, pk):
     """Updates awarded point"""
+    # Retrieve the PointTransaction instance to be updated
     point = PointTransaction.objects.get(id=pk)
+
+    # Initialize the form with the current instance data
     form = AwardForm(instance=point)
+
+    # Handle form submission
     if request.method == 'POST':
+        # Bind the form with the posted data and update the instance
         form = AwardForm(request.POST, instance=point)
+
+        # Validate the form
         if form.is_valid():
             form.save()
+            # Display a success message
             messages.success(request, "Point Edited Successfully")
+            # Redirect to the desired page after successful update
             return redirect('award-point')
             # return redirect('teachers_dashboard')
 
@@ -84,19 +95,25 @@ def delete_point(request, pk):
                   login_url='login')
 def teachers_dashboard(request):
     """listing the awarded points"""
+    # Retrieve awarded points for the current teacher and
+    # order them by creation date
     points = (
         PointTransaction.objects
         .filter(teacher=request.user)
         .order_by('-created_at')
     )
 
+    # Calculate the total points awarded across all students
     total_points = (
         PointTransaction.objects.all()
         .aggregate(Sum('category__point'))
         .get('category__point__sum', 0) or 0
     )
 
+    # Retrieve unique awards by student username
     awards = PointTransaction.objects.values('student__username').distinct()
+
+    # Calculate the total points awarded for each student
     pts = {
         award['student__username']: (
             PointTransaction.objects
@@ -105,16 +122,21 @@ def teachers_dashboard(request):
         )
         for award in awards
     }
-    ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
-    no_of_students_awarded = len(ptss)
 
+    # Sort the points by descending order
+    ptss = sorted(pts.items(), key=lambda x: x[1], reverse=True)
+    # Calculate the total number of students who have been awarded points
+    no_of_students_awarded = len(ptss)
+    # Calculate the total points redeemed across all students
     total_redeemed = (
         RedeemAward.objects.all()
         .aggregate(Sum('select_award__points'))
         .get('select_award__points__sum', 0) or 0
     )
 
+    # Retrieve unique redemptions by student username
     redeems = RedeemAward.objects.values('student__username').distinct()
+    # Calculate the total points redeemed for each student
     rdm = {
         redeem['student__username']: (
             RedeemAward.objects
@@ -124,13 +146,16 @@ def teachers_dashboard(request):
         )
         for redeem in redeems
     }
+    # Sort the redeemed points by descending order
     rdms = sorted(rdm.items(), key=lambda x: x[1], reverse=True)
+    # Calculate the total number of students who have redeemed points
     no_of_students_redeemed = len(rdms)
-
+    # Calculate the total balance of points (awarded - redeemed)
     total_balance = total_points - total_redeemed
-
+    # Retrieve teacher profile information
     bios = TeacherProfile.objects.filter(user=request.user)[0]
 
+    # Prepare the context for rendering the template
     context = {
             'points': points,
             'rdms': rdms,
@@ -142,6 +167,7 @@ def teachers_dashboard(request):
             'students_redeemed': no_of_students_redeemed,
             'bios': bios
     }
+    # Render the template with the context
     return render(request, "base/teachers_dashboard.html", context)
 
 
